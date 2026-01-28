@@ -1,0 +1,14 @@
+# Python garbage
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# PyCharm garbage
+.idea/
+*.iml
+
+# OS garbage
+.DS_Store
+Thumbs.db
