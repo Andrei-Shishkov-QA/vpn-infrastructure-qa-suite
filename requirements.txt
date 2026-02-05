@@ -1,5 +1,5 @@
 pytest==8.0.0
-testinfra==10.1.0
+pytest-testinfra==10.1.0
 paramiko==3.4.0
 python-dotenv==1.0.1
 requests==2.31.0

@@ -48,7 +48,7 @@ graph TD
 
 
 ## Management Plane
-* **Access:** SSH Key-based authentication only (root login disabled).
+* **Access:** SSH Password authentication (MVP state). Migration to Key-based auth is planned.
 * **Configuration:** Infrastructure as Code (Local Git repository).
 * **Monitoring:** Passive (Script-based periodic checks).
 
