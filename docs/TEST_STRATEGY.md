@@ -36,17 +36,18 @@ We combine automated infrastructure checks with manual client validation:
 ## 4. Requirements Traceability Matrix (RTM)
 Linking business requirements to technical implementations.
 
-| ID          | Requirement                                       | Implementation (Test)                                    |
-|:------------|:--------------------------------------------------|:---------------------------------------------------------|
-| **REQ-000** | Infrastructure Availability (Smoke)               | `tests/test_security_audit.py::test_server_connectivity` |
-| **REQ-001** | SSH Root login must be disabled                   | `test_security.py::test_ssh_root_login`                  |
-| **REQ-002** | Firewall (UFW) must be active                     | `test_security.py::test_ufw_status`                      |
-| **REQ-003** | Fail2Ban must protect port 22                     | `test_security.py::test_fail2ban_running`                |
-| **REQ-004** | Backup must be sent to off-site storage           | `backup_tg.sh` + JSON validation                         |
-| **REQ-005** | Network Quality (Latency & Speed) monitored       | `latency_check.sh` + `iperf3`                            |
-| **REQ-006** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                              |
-| **REQ-007** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                   |
-| **REQ-008** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                |
+| ID          | Requirement                                       | Implementation (Test)                                     |
+|:------------|:--------------------------------------------------|:----------------------------------------------------------|
+| **REQ-000** | Infrastructure Availability (Smoke)               | `tests/test_security_audit.py::test_server_connectivity`  |
+| **REQ-001** | SSH Root login must be disabled                   | `tests/test_audit_rules.py::test_ssh_root_login_disabled` |
+| **REQ-002** | Firewall (UFW) must be active                     | `tests/test_audit_rules.py::test_firewall_status`         |
+| **REQ-003** | Fail2Ban must protect port 22                     | `tests/test_audit_rules.py::test_fail2ban_status`         |
+| **REQ-004** | OS Standardization (Ubuntu/Debian)                | `tests/test_audit_rules.py::test_os_version`              |
+| **REQ-005** | Backup must be sent to off-site storage           | `backup_tg.sh` + JSON validation                          |
+| **REQ-006** | Network Quality (Latency & Speed) monitored       | `latency_check.sh` + `iperf3`                             |
+| **REQ-007** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                               |
+| **REQ-008** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                    |
+| **REQ-009** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                 |
 
 
 ## 5. Execution Strategy (CI/CD & Monitoring)
@@ -89,3 +90,15 @@ We categorize tests by frequency to balance feedback speed with resource consump
     4.  **Auth Layer:** Validates that credentials (`root` + password/key) are correct.
     5.  **Execution:** Validates that the OS can fork a process (`hostname`) and return `stdout`.
 * **Execution Command:** `pytest -m "smoke"`
+
+### SEC-01: Deep Security Audit
+* **Linked Requirements:** REQ-001, REQ-002, REQ-003, REQ-004
+* **Goal:** Enforce security best practices across all infrastructure nodes.
+* **Checks Performed:**
+    1.  **OS Consistency (REQ-004):** Ensures nodes run supported OS versions (Ubuntu/Debian) to prevent "configuration drift".
+    2.  **Firewall Status (REQ-002):**
+        * *Ubuntu:* Verifies `ufw` is active.
+        * *Debian:* Verifies `ufw` status is active (command-based check).
+    3.  **Intrusion Prevention (REQ-003):** Verifies `fail2ban` service is running to block brute-force attacks.
+    4.  **Root Login (REQ-001):** Checks `/etc/ssh/sshd_config` to ensure `PermitRootLogin` is set to `no`.
+* **Execution Command:** `pytest tests/test_audit_rules.py`
