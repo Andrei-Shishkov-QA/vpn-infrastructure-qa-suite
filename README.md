@@ -39,6 +39,21 @@ The system operates on a **Shared-Nothing Architecture** across 4 geographical z
 ```
 
 
+## 💻 System Requirements
+
+### Control Node (Where you run tests)
+* **OS:** Windows, macOS, or Linux
+* **Python:** 3.10 or higher
+* **Network:** Access to target servers via SSH (Port 22)
+
+### Target Nodes (VPN Servers)
+The automation scripts assume the following environment on the servers:
+* **OS:** Ubuntu 20.04+ OR Debian 11+
+* **Access:** SSH access with Sudo/Root privileges
+* **Package Manager:** `apt` (checking for `ufw`, `fail2ban`, `iperf3`)
+* **Init System:** `systemd`
+
+
 ## 🚀 How to Run Tests
 
 **1. Clone the repository:**
