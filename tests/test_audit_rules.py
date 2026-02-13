@@ -1,19 +1,13 @@
 import pytest
 import testinfra
 import os
+import sys
 import urllib.parse
-from dotenv import load_dotenv
 
-load_dotenv()
+# Добавляем корневую папку в путь поиска, чтобы Python увидел inventory.py
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-servers = [
-    ("NL-AMS", os.getenv("HOST_NL"), os.getenv("USER_NL"), os.getenv("PASS_NL")),
-    ("AT-VIE", os.getenv("HOST_AT"), os.getenv("USER_AT"), os.getenv("PASS_AT")),
-    ("RU-MOW", os.getenv("HOST_RU"), os.getenv("USER_RU"), os.getenv("PASS_RU")),
-    ("DE-DUS", os.getenv("HOST_DE"), os.getenv("USER_DE"), os.getenv("PASS_DE")),
-]
-servers = [s for s in servers if s[1]]
-
+from inventory import SERVERS as servers
 
 def get_host(ip, user, password):
     """
