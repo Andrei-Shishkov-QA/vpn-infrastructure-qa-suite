@@ -3,10 +3,10 @@ import sys
 import datetime
 import requests
 import paramiko
+import time
 from scp import SCPClient
 from dotenv import load_dotenv
 
-# --- МАГИЯ ИМПОРТА ---
 # Добавляем корневую папку проекта в пути, чтобы увидеть inventory.py
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inventory import SERVERS
@@ -16,6 +16,8 @@ load_dotenv()
 # Настройки Телеграм
 TG_TOKEN = os.getenv("TG_BOT_TOKEN")
 TG_CHAT_ID = os.getenv("TG_CHAT_ID")
+
+RETENTION_DAYS = 7
 
 # Папка для локального сохранения бэкапов
 BACKUP_DIR = os.path.join(os.path.dirname(__file__), "../backups")
@@ -98,6 +100,33 @@ def create_remote_backup(server_name, ip, user, password, paths):
         ssh.close()
 
 
+def cleanup_old_backups(days):
+    """Удаляет локальные файлы старше N дней"""
+    if days <= 0:
+        return
+
+    print(f"\n🧹 Cleaning up local backups older than {days} days...")
+    now = time.time()
+    cutoff = days * 86400  # 86400 секунд в сутках
+
+    count = 0
+    if os.path.exists(BACKUP_DIR):
+        for filename in os.listdir(BACKUP_DIR):
+            file_path = os.path.join(BACKUP_DIR, filename)
+            # Проверяем, что это файл
+            if os.path.isfile(file_path):
+                file_age = now - os.path.getmtime(file_path)
+                if file_age > cutoff:
+                    try:
+                        os.remove(file_path)
+                        print(f"   🗑️ Deleted old file: {filename}")
+                        count += 1
+                    except Exception as e:
+                        print(f"   ⚠️ Could not delete {filename}: {e}")
+
+    if count == 0:
+        print("   ✨ Nothing to clean (all files are fresh).")
+
 if __name__ == "__main__":
     print("🚀 Starting Backup Process...")
 
@@ -114,5 +143,5 @@ if __name__ == "__main__":
         paths = server[4] if len(server) > 4 else []
 
         create_remote_backup(name, ip, user, password, paths)
-
+    cleanup_old_backups(RETENTION_DAYS)
     print("\n✅ All Done! Check your Telegram.")
