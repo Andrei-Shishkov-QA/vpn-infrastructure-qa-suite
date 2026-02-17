@@ -44,7 +44,7 @@ Linking business requirements to technical implementations.
 | **REQ-003** | Fail2Ban must protect port 22                     | `tests/test_audit_rules.py::test_fail2ban_status`         |
 | **REQ-004** | OS Standardization (Ubuntu/Debian)                | `tests/test_audit_rules.py::test_os_version`              |
 | **REQ-005** | Network Performance (Latency, Loss, Bandwidth)    | `tests/test_network_perf.py (pythonping)`                 |
-| **REQ-006** | Disaster Recovery (Backup)                        | `scripts/backup.py`                                       |
+| **REQ-006** | Disaster Recovery (Backup)                        | `scripts/backup.py` + Test:`tests/test_backup.py`         |
 | **REQ-007** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                               |
 | **REQ-008** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                    |
 | **REQ-009** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                 |
@@ -121,7 +121,10 @@ We categorize tests by frequency to balance feedback speed with resource consump
 * **Goal:** Prevent data loss by automatically archiving critical server configurations and databases.
 * **Mechanism:**
     1.  Script reads `inventory.py` to find target paths (supports 3x-ui, Outline, Docker Volumes).
-    2.  Connects via SSH, creates a `.tar.gz` archive (excluding non-essential metrics like Prometheus).
-    3.  Downloads archive locally to `backups/`.
-    4.  Sends the archive to the Admin via Telegram Bot.
-* **Execution:** `python scripts/backup.py`
+    2.  Connects via SSH, creates a `.tar.gz` archive (excluding non-essential metrics).
+    3.  Downloads archive locally to `backups/` and sends it to Admin via Telegram.
+    4.  **Retention Policy:** Automatically deletes local backup files older than **7 days** to prevent disk overflow.
+* **Implementation:** `scripts/backup.py`
+* **Verification:** `tests/test_backup.py`
+    * *Type:* Integration Test.
+    * *Checks:* Validates directory permissions, configuration integrity, and verifies Telegram API connectivity by sending a test payload.
