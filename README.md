@@ -112,7 +112,13 @@ pytest -m "smoke"
 1. Security Audit & Smoke Tests (REQ-001...REQ-004)
 Checks SSH availability, OS version, Firewall status, and Root login restrictions.
 
+**5. Run Manual Validation (UAT):**
+For UI/UX and client-side connectivity checks (REQ-007, REQ-008), follow the standardized checklist:
+* 📄 **File:** [MOBILE_CLIENT_CHECKLIST.md](manual_tests/MOBILE_CLIENT_CHECKLIST.md)
+* **Scope:** IP Leak tests, DPI bypass verification, and battery optimization checks for Android/iOS.
+
 ## 📈 Documentation Links
 [Test Strategy](docs/TEST_STRATEGY.md) & RTM - What and how we test.
 [Migration Report](docs/MIGRATION_REPORT.md) - Evolution from Single-Node to HA.
 [Mobile Client](manual_tests/MOBILE_CLIENT_CHECKLIST.md) Checklist - User Acceptance Testing..
+📄 **[Sample Test Case: Privacy Leak](manual_tests/TC-MAN-003_Privacy_Leak.md)** — Example of a detailed manual test artifact (Steps & Expected Results).

@@ -127,3 +127,19 @@ We categorize tests by frequency to balance feedback speed with resource consump
 * **Verification:** `tests/test_backup.py`
     * *Type:* Integration Test.
     * *Checks:* Validates directory permissions, configuration integrity, and verifies Telegram API connectivity by sending a test payload.
+
+### MAN-01: Client Privacy & Connectivity (Manual)
+* **Linked Requirements:** REQ-007, REQ-008
+* **Goal:** Verify the "Last Mile" delivery — ensuring the end-user actually receives the security and connectivity promised by the infrastructure.
+* **Why Manual?** Automated scripts can verify the server is *sending* packets, but cannot verify if a specific ISP in Russia is *dropping* them via DPI (Deep Packet Inspection) or if the mobile OS is killing the background process.
+* **Checks Performed:**
+    1.  **Leak Protection (REQ-007):**
+        * *Detailed Steps:* See **[TC-MAN-003_Privacy_Leak.md](../manual_tests/TC-MAN-003_Privacy_Leak.md)**
+        * *DNS Leak:* Verifies that DNS requests are resolved by the VPN server, not the local ISP.
+        * *WebRTC Leak:* Ensures the browser doesn't reveal the real local IP via STUN requests.
+        * *Tools:* whoer.net, browser leaks.com.
+    2.  **Resilience (REQ-008):**
+        * *Network Switch:* Verifies session persistence when switching from Wi-Fi to 4G/LTE (Handover).
+        * *Kill Switch:* Verifies internet traffic is blocked if the VPN connection drops unexpectedly.
+* **Execution Reference:** See `/manual_tests/MOBILE_CLIENT_CHECKLIST.md`
+
