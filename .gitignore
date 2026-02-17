@@ -12,3 +12,6 @@ venv/
 # OS garbage
 .DS_Store
 Thumbs.db
+
+# backups
+backups/

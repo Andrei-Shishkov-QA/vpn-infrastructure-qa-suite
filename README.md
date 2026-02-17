@@ -61,6 +61,31 @@ pytest tests/test_network_perf.py -s
 #Flag -s allows seeing real-time speed results in Mbps
 ```
 
+## 📦 Backup System (Disaster Recovery)
+
+The project includes a tool to backup VPN configurations (3x-ui databases, Outline keys, Docker volumes) and send them to Telegram.
+
+### 1. Setup Telegram Bot
+1. Create a bot via **@BotFather** in Telegram -> Get `Bot Token`.
+2. Find your Chat ID via **@userinfobot** -> Get `Chat ID`.
+3. Add them to `.env`:
+   ```ini
+   TG_BOT_TOKEN=123456:ABC-DEF...
+   TG_CHAT_ID=123456789
+   ```
+### 2. Configure Backup Paths
+   Define which folders to backup for each server in .env.
+   (Note: Use comma to separate multiple paths).
+   ```ini
+   NODE_1_BACKUP_PATHS=/etc/x-ui,/opt/outline/persisted-state
+   NODE_4_BACKUP_PATHS=/var/lib/docker/volumes/remnawave_db_data/_data
+   ```
+### 3. Run Backup
+```bash
+python scripts/backup.py
+```
+Result: Archives will be saved in backups/ folder and sent to your Telegram chat.
+
 ## 🚀 Quick Start (Installation)
 
 **1. Clone the repository:**

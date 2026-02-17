@@ -36,18 +36,18 @@ We combine automated infrastructure checks with manual client validation:
 ## 4. Requirements Traceability Matrix (RTM)
 Linking business requirements to technical implementations.
 
-| ID          | Requirement                                       | Implementation (Test)                                      |
-|:------------|:--------------------------------------------------|:-----------------------------------------------------------|
-| **REQ-000** | Infrastructure Availability (Smoke)               | `tests/test_security_audit.py::test_server_connectivity`   |
-| **REQ-001** | SSH Root login must be disabled                   | `tests/test_audit_rules.py::test_ssh_root_login_disabled`  |
-| **REQ-002** | Firewall (UFW) must be active                     | `tests/test_audit_rules.py::test_firewall_status`          |
-| **REQ-003** | Fail2Ban must protect port 22                     | `tests/test_audit_rules.py::test_fail2ban_status`          |
-| **REQ-004** | OS Standardization (Ubuntu/Debian)                | `tests/test_audit_rules.py::test_os_version`               |
-| **REQ-005** | Network Performance (Latency, Loss, Bandwidth)    | `tests/test_network_perf.py (pythonping)`                  |
-| **REQ-006** | Backup must be sent to off-site storage           | `backup_tg.sh` + JSON validation                           |
-| **REQ-007** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                                |
-| **REQ-008** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                     |
-| **REQ-009** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                  |
+| ID          | Requirement                                       | Implementation (Test)                                     |
+|:------------|:--------------------------------------------------|:----------------------------------------------------------|
+| **REQ-000** | Infrastructure Availability (Smoke)               | `tests/test_security_audit.py::test_server_connectivity`  |
+| **REQ-001** | SSH Root login must be disabled                   | `tests/test_audit_rules.py::test_ssh_root_login_disabled` |
+| **REQ-002** | Firewall (UFW) must be active                     | `tests/test_audit_rules.py::test_firewall_status`         |
+| **REQ-003** | Fail2Ban must protect port 22                     | `tests/test_audit_rules.py::test_fail2ban_status`         |
+| **REQ-004** | OS Standardization (Ubuntu/Debian)                | `tests/test_audit_rules.py::test_os_version`              |
+| **REQ-005** | Network Performance (Latency, Loss, Bandwidth)    | `tests/test_network_perf.py (pythonping)`                 |
+| **REQ-006** | Disaster Recovery (Backup)                        | `scripts/backup.py`                                       |
+| **REQ-007** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                               |
+| **REQ-008** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                    |
+| **REQ-009** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                 |
 
 
 
@@ -115,3 +115,13 @@ We categorize tests by frequency to balance feedback speed with resource consump
         * *Threshold:* > 30 Mbps (Guarantees 4K streaming).
     3.  **Privilege Handling:** The test automatically detects if `sudo` is required (Smart Host Logic) to support both Root and Non-Root environments.
 * **Execution Command:** `pytest tests/test_network_perf.py -s`
+
+### Disaster Recovery & Backup System
+* **Linked Requirement:** REQ-006
+* **Goal:** Prevent data loss by automatically archiving critical server configurations and databases.
+* **Mechanism:**
+    1.  Script reads `inventory.py` to find target paths (supports 3x-ui, Outline, Docker Volumes).
+    2.  Connects via SSH, creates a `.tar.gz` archive (excluding non-essential metrics like Prometheus).
+    3.  Downloads archive locally to `backups/`.
+    4.  Sends the archive to the Admin via Telegram Bot.
+* **Execution:** `python scripts/backup.py`
