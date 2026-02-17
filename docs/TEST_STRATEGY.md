@@ -36,18 +36,19 @@ We combine automated infrastructure checks with manual client validation:
 ## 4. Requirements Traceability Matrix (RTM)
 Linking business requirements to technical implementations.
 
-| ID          | Requirement                                       | Implementation (Test)                                     |
-|:------------|:--------------------------------------------------|:----------------------------------------------------------|
-| **REQ-000** | Infrastructure Availability (Smoke)               | `tests/test_security_audit.py::test_server_connectivity`  |
-| **REQ-001** | SSH Root login must be disabled                   | `tests/test_audit_rules.py::test_ssh_root_login_disabled` |
-| **REQ-002** | Firewall (UFW) must be active                     | `tests/test_audit_rules.py::test_firewall_status`         |
-| **REQ-003** | Fail2Ban must protect port 22                     | `tests/test_audit_rules.py::test_fail2ban_status`         |
-| **REQ-004** | OS Standardization (Ubuntu/Debian)                | `tests/test_audit_rules.py::test_os_version`              |
-| **REQ-005** | Backup must be sent to off-site storage           | `backup_tg.sh` + JSON validation                          |
-| **REQ-006** | Network Quality (Latency & Speed) monitored       | `latency_check.sh` + `iperf3`                             |
-| **REQ-007** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                               |
-| **REQ-008** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                    |
-| **REQ-009** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                 |
+| ID          | Requirement                                       | Implementation (Test)                                      |
+|:------------|:--------------------------------------------------|:-----------------------------------------------------------|
+| **REQ-000** | Infrastructure Availability (Smoke)               | `tests/test_security_audit.py::test_server_connectivity`   |
+| **REQ-001** | SSH Root login must be disabled                   | `tests/test_audit_rules.py::test_ssh_root_login_disabled`  |
+| **REQ-002** | Firewall (UFW) must be active                     | `tests/test_audit_rules.py::test_firewall_status`          |
+| **REQ-003** | Fail2Ban must protect port 22                     | `tests/test_audit_rules.py::test_fail2ban_status`          |
+| **REQ-004** | OS Standardization (Ubuntu/Debian)                | `tests/test_audit_rules.py::test_os_version`               |
+| **REQ-005** | Network Performance (Latency, Loss, Bandwidth)    | `tests/test_network_perf.py (pythonping)`                  |
+| **REQ-006** | Backup must be sent to off-site storage           | `backup_tg.sh` + JSON validation                           |
+| **REQ-007** | User Real IP must be hidden (Privacy)             | `public_ip_check.sh` (curl)                                |
+| **REQ-008** | Alert System (Telegram) must be reachable         | `test_api_contract.py`                                     |
+| **REQ-009** | Mobile Clients must connect via vless/shadowsocks | `manual_tests/MOBILE_CLIENT_CHECKLIST.md`                  |
+
 
 
 ## 5. Execution Strategy (CI/CD & Monitoring)
@@ -102,3 +103,15 @@ We categorize tests by frequency to balance feedback speed with resource consump
     3.  **Intrusion Prevention (REQ-003):** Verifies `fail2ban` service is running to block brute-force attacks.
     4.  **Root Login (REQ-001):** Checks `/etc/ssh/sshd_config` to ensure `PermitRootLogin` is set to `no`.
 * **Execution Command:** `pytest tests/test_audit_rules.py`
+
+### NET-01: Network Quality Assessment (Performance)
+* **Linked Requirement:** REQ-005
+* **Goal:** Verify server connectivity quality from two perspectives: Client-to-Server (Latency) and Server-to-Internet (Bandwidth).
+* **Checks Performed:**
+    1.  **Latency (Ping):** Measures Round-Trip Time (RTT) from Control Node to Server using `pythonping`.
+        * *Thresholds:* < 100ms (RU), < 300ms (EU/Global). Loss must be 0%.
+    2.  **Bandwidth (Global CDN):** The server downloads a test file from a Global CDN (Cachefly) via `curl`.
+        * *Why CDN?* Ensures the server connects to the nearest high-speed node (Anycast), simulating real-world usage (Youtube/Netflix) and bypassing geographic routing bottlenecks.
+        * *Threshold:* > 30 Mbps (Guarantees 4K streaming).
+    3.  **Privilege Handling:** The test automatically detects if `sudo` is required (Smart Host Logic) to support both Root and Non-Root environments.
+* **Execution Command:** `pytest tests/test_network_perf.py -s`

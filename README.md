@@ -53,8 +53,15 @@ The automation scripts assume the following environment on the servers:
 * **Package Manager:** `apt` (checking for `ufw`, `fail2ban`, `iperf3`)
 * **Init System:** `systemd`
 
+### Network Performance (REQ-005)
+*Corresponds to Test Case: NET-01*
+Checks Latency (Ping) and Bandwidth (Download Speed from Global CDN).
+```bash
+pytest tests/test_network_perf.py -s
+#Flag -s allows seeing real-time speed results in Mbps
+```
 
-## 🚀 How to Run Tests
+## 🚀 Quick Start (Installation)
 
 **1. Clone the repository:**
 ```bash
@@ -68,12 +75,17 @@ pip install -r requirements.txt
 
 **3. Configure Environment:**
 Create a .env file with your node credentials (see .env.example).
+Fill in your Real IP and Passwords in .env.
 
+
+## 🛠️ How to Run Tests (Test Menu)
 **4. Run Security Audit (Smoke Tests):**
 ```bash
 pytest -m "smoke"
 ```
 
+1. Security Audit & Smoke Tests (REQ-001...REQ-004)
+Checks SSH availability, OS version, Firewall status, and Root login restrictions.
 
 ## 📈 Documentation Links
 [Test Strategy](docs/TEST_STRATEGY.md) & RTM - What and how we test.
