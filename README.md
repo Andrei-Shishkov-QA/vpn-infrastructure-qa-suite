@@ -61,6 +61,28 @@ pytest tests/test_network_perf.py -s
 #Flag -s allows seeing real-time speed results in Mbps
 ```
 
+## 📊 Infrastructure Status Monitor
+
+### 📊 Infrastructure Monitoring (REQ-009)
+
+The project includes a custom Python script for deep health checks of all connected nodes. Unlike simple ping tools, it logs into servers via SSH to inspect internal state.
+
+**Capabilities:**
+* **Smart Service Detection:** Automatically identifies if a node runs Docker (Outline/Remnawave) or Systemd (X-UI) and checks the corresponding process.
+* **Resource Guard:** Warns on Low Disk (<15%) or High RAM (>90%).
+* **Cross-Platform:** Works on Windows, Linux, and macOS.
+
+**How to run:**
+```bash
+python scripts/monitor.py
+```
+Sample Output:
+🖥️  NL-AMS [80.85.x.x]
+  ├── ✅ PING            : Latency < 1s
+  ├── ✅ PORT 443        : Open (HTTPS)
+  ├── ❌ DISK            : 93% Used (CRITICAL)
+  ├── ✅ DOCKER: OUTLINE : Active / Running
+
 ## 📦 Backup System (Disaster Recovery)
 
 The project includes a tool to backup VPN configurations (3x-ui databases, Outline keys, Docker volumes) and send them to Telegram.

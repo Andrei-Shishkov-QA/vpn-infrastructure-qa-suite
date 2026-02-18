@@ -36,18 +36,18 @@ We combine automated infrastructure checks with manual client validation:
 ## 4. Requirements Traceability Matrix (RTM)
 Linking business requirements to technical implementations.
 
-| ID          | Requirement                                    | Implementation (Test)                                     |
-|:------------|:-----------------------------------------------|:----------------------------------------------------------|
-| **REQ-000** | Infrastructure Availability (Smoke)            | `tests/test_security_audit.py::test_server_connectivity`  |
-| **REQ-001** | SSH Root login must be disabled                | `tests/test_audit_rules.py::test_ssh_root_login_disabled` |
-| **REQ-002** | Firewall (UFW) must be active                  | `tests/test_audit_rules.py::test_firewall_status`         |
-| **REQ-003** | Fail2Ban must protect port 22                  | `tests/test_audit_rules.py::test_fail2ban_status`         |
-| **REQ-004** | OS Standardization (Ubuntu/Debian)             | `tests/test_audit_rules.py::test_os_version`              |
-| **REQ-005** | Network Performance (Latency, Loss, Bandwidth) | `tests/test_network_perf.py (pythonping)`                 |
-| **REQ-006** | Disaster Recovery (Backup)                     | `scripts/backup.py` + Test:`tests/test_backup.py`         |
-| **REQ-007** | Privacy (Hide Real IP)                         | `/manual_tests/MOBILE_CLIENT_CHECKLIST.md` Manual         |
-| **REQ-008** | Mobile Connectivity                            | `/manual_tests/MOBILE_CLIENT_CHECKLIST.md` Manual         |
-| **REQ-009** | Alert System (Monitoring)                      | `scripts/monitor.py` Auto (Script)                        |
+| ID          | Requirement                                     | Implementation (Test)                                          |
+|:------------|:------------------------------------------------|:---------------------------------------------------------------|
+| **REQ-000** | Infrastructure Availability (Smoke)             | `tests/test_security_audit.py::test_server_connectivity`       |
+| **REQ-001** | SSH Root login must be disabled                 | `tests/test_audit_rules.py::test_ssh_root_login_disabled`      |
+| **REQ-002** | Firewall (UFW) must be active                   | `tests/test_audit_rules.py::test_firewall_status`              |
+| **REQ-003** | Fail2Ban must protect port 22                   | `tests/test_audit_rules.py::test_fail2ban_status`              |
+| **REQ-004** | OS Standardization (Ubuntu/Debian)              | `tests/test_audit_rules.py::test_os_version`                   |
+| **REQ-005** | Network Performance (Latency, Loss, Bandwidth)  | `tests/test_network_perf.py (pythonping)`                      |
+| **REQ-006** | Disaster Recovery (Backup)                      | `scripts/backup.py`Auto (Script) + Test:`tests/test_backup.py` |
+| **REQ-007** | Privacy (Hide Real IP)                          | `/manual_tests/MOBILE_CLIENT_CHECKLIST.md` Manual              |
+| **REQ-008** | Mobile Connectivity                             | `/manual_tests/MOBILE_CLIENT_CHECKLIST.md` Manual              |
+| **REQ-009** | Infrastructure Health Check (Console Monitor)   | `scripts/monitor.py` Auto (Script)                             |
 
 
 ## 5. Execution Strategy (CI/CD & Monitoring)
@@ -143,3 +143,18 @@ We categorize tests by frequency to balance feedback speed with resource consump
         * *Kill Switch:* Verifies internet traffic is blocked if the VPN connection drops unexpectedly.
 * **Execution Reference:** See `/manual_tests/MOBILE_CLIENT_CHECKLIST.md`
 
+### MON-01: Infrastructure Health Check (Console Monitor)
+* **Linked Requirement:** REQ-009
+* **Goal:** Provide a deep, instant snapshot of server health to detect internal issues (Disk/RAM) before they cause outages.
+* **Why this script?** Standard uptime checkers (like UptimeRobot) only check Ping. They miss internal "Soft Failures" like full disks or zombie Docker containers.
+* **Logic (Console Dashboard):**
+    1.  **Connectivity:** Verifies ICMP Ping + TCP Port 443 (HTTPS) reachability.
+    2.  **Resources (Thresholds):**
+        * *Disk:* Flags status as **CRITICAL** if free space < 15%.
+        * *RAM:* Flags status as **WARNING** if usage > 90%.
+    3.  **Service Awareness:**
+        * dynamically scans `inventory.py` to identify required services.
+        * *Outline Nodes:* Verifies Docker container `shadowbox` is running.
+        * *X-UI Nodes:* Verifies Systemd service `x-ui` is active.
+        * *Remnawave Nodes:* Verifies Docker container `remnawave` is running.
+* **Execution:** `python scripts/monitor.py` (Manual run by Admin or via CI pipeline).
