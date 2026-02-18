@@ -15,3 +15,10 @@ Thumbs.db
 
 # backups
 backups/
+
+# Allure Reports (Temporary files)
+allure-results/
+allure-report/
+
+# Pytest cache
+.pytest_cache/
