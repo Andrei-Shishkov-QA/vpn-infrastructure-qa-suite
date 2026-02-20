@@ -1,0 +1,49 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"1. Проверяем, что папка backups/ создана и доступна для записи","0","test_backup_directory_exists","tests","Fri Feb 20 15:21:59 UTC 2026","passed","Fri Feb 20 15:21:59 UTC 2026","","test_backup","",""
+"
+        REQ-005 (Part 1): Пинг от тебя до сервера.
+        ","0","test_latency_and_loss_from_client[NL-AMS]","tests","Fri Feb 20 15:22:00 UTC 2026","skipped","Fri Feb 20 15:22:00 UTC 2026","TestNetworkPerformance","test_network_perf","",""
+"2. Проверяем, что токены загрузились","0","test_telegram_config","tests","Fri Feb 20 15:21:59 UTC 2026","passed","Fri Feb 20 15:21:59 UTC 2026","","test_backup","",""
+"
+        REQ-004: OS Standardization (Ubuntu/Debian).
+        Logic: Verify that the server runs a supported Linux distribution.
+        This prevents 'configuration drift' where servers become too different to manage.
+        ","2490","test_os_version[NL-AMS]","tests","Fri Feb 20 15:21:55 UTC 2026","passed","Fri Feb 20 15:21:57 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-002: Firewall (UFW) must be active.
+        Logic: We check the command output 'ufw status' explicitly.
+        We expect to see 'Status: active'. This covers both Ubuntu and Debian correctly,
+        avoiding false negatives from systemd service status.
+        ","531","test_firewall_status[NL-AMS]","tests","Fri Feb 20 15:21:57 UTC 2026","passed","Fri Feb 20 15:21:58 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-003: Intrusion Prevention System (Fail2Ban).
+        Logic: Verify that 'fail2ban' service is running to block brute-force attacks.
+        (Marked as xfail: We know it's missing on fresh servers, planned for next sprint).
+        ","935","test_fail2ban_status[NL-AMS]","tests","Fri Feb 20 15:21:58 UTC 2026","skipped","Fri Feb 20 15:21:59 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-001: SSH Root Login must be disabled.
+        Logic: Check /etc/ssh/sshd_config for 'PermitRootLogin no'.
+        (Marked as xfail: Currently we use root user for automation, architectural exception).
+        ","401","test_ssh_root_login_disabled[NL-AMS]","tests","Fri Feb 20 15:21:59 UTC 2026","skipped","Fri Feb 20 15:21:59 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+    4. ИНТЕГРАЦИОННЫЙ ТЕСТ:
+    Создаем маленький файл и реально пытаемся отправить его в Телеграм.
+    Если придет 200 OK — значит, система доставки работает.
+    ","695","test_telegram_delivery_real","tests","Fri Feb 20 15:21:59 UTC 2026","passed","Fri Feb 20 15:22:00 UTC 2026","","test_backup","",""
+"3. Проверяем, что хотя бы у одного сервера прописаны пути для бэкапа","0","test_inventory_has_backup_paths","tests","Fri Feb 20 15:21:59 UTC 2026","passed","Fri Feb 20 15:21:59 UTC 2026","","test_backup","",""
+"
+        REQ-005 (Part 2): Скорость (HTTP Download).
+        Используем Global CDN (Cachefly) для проверки реальной ширины канала.
+        ","450","test_server_download_speed_http[NL-AMS]","tests","Fri Feb 20 15:22:00 UTC 2026","passed","Fri Feb 20 15:22:00 UTC 2026","TestNetworkPerformance","test_network_perf","",""
+"
+        SMOKE TEST (REQ-000): Verifies SSH connectivity to the server.
+
+        This test covers multiple layers of the stack implicitly:
+        1. Network Layer: IP is reachable.
+        2. Transport Layer: Port 22 is open and accepting TCP connections.
+        3. Application (SSH): SSH Daemon is running and accepts the handshake.
+        4. Auth Layer: Credentials (root + password) are correct.
+        5. Execution: System can fork a process ('hostname') and return stdout.
+
+        If this test fails, further security auditing (REQ-001+) is impossible.
+        ","0","test_server_connectivity[name0-ip0-user0-password0]","tests","Fri Feb 20 15:22:00 UTC 2026","skipped","Fri Feb 20 15:22:00 UTC 2026","","test_security_audit","",""
