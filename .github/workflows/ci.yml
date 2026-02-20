@@ -52,7 +52,15 @@ jobs:
       # continue-on-error: true означает "собери отчет, даже если тесты упали"
       continue-on-error: true
       run: |
-        sudo $(which python) -m pytest -v --alluredir=allure-results
+        sudo -E $(which python) -m pytest -v --alluredir=allure-results
+
+    - name: DevSecOps Fallback - Clean JSON artifacts
+      if: always()
+      run: |
+        sudo apt-get update && sudo apt-get install -y jq
+        find allure-results -name "*-result.json" -exec bash -c '
+          jq "if .parameters then .parameters |= map(if (.name | ascii_downcase | test(\"password|pass|passw|secret|token|key|ip|user\")) then .value = \"'\"'***'\"'\" else . end) else . end" {} > {}.tmp && mv {}.tmp {}
+          ' \;
 
     - name: Generate Allure Report
       uses: simple-elf/allure-report-action@master

@@ -17,6 +17,7 @@ Thumbs.db
 backups/
 
 # Allure Reports (Temporary files)
+temp_results/
 allure-results/
 allure-report/
 
