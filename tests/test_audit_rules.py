@@ -59,16 +59,49 @@ class TestSecurityRules:
         # Проверяем, что в ответе есть слово active (регистр не важен)
         assert "Status: active" in result.stdout, f"⛔ UFW is NOT active on {name}"
 
-    @pytest.mark.xfail(reason="Fail2Ban installation pending (Task OPS-003)")
     def test_fail2ban_status(self, name, ip, user, password):
         """
         REQ-003: Intrusion Prevention System (Fail2Ban).
-        Logic: Verify that 'fail2ban' service is running to block brute-force attacks.
-        (Marked as xfail: We know it's missing on fresh servers, planned for next sprint).
+        Self-Healing 2.0: Install if missing, AND restart if stopped/crashed.
         """
         host = get_host(ip, user, password)
-        f2b = host.service("fail2ban")
-        assert f2b.is_running, f"⛔ Fail2Ban is NOT running on {name}"
+        fail2ban_pkg = host.package("fail2ban")
+        f2b_service = host.service("fail2ban")
+
+        # ТРИГГЕР: Пакет не установлен ИЛИ служба не работает
+        if not fail2ban_pkg.is_installed or not f2b_service.is_running:
+            print(f"\n🛠️ fail2ban не работает на {name}. Начинаю ремонт...")
+
+            # Блок 1: Если вообще не установлен — ставим
+            if not fail2ban_pkg.is_installed:
+                host.run("apt-get update")
+                if host.system_info.distribution.lower() == "debian":
+                    print(f"   [Debian Fix] Устанавливаем fail2ban + rsyslog...")
+                    host.run("DEBIAN_FRONTEND=noninteractive apt-get install -y fail2ban rsyslog")
+                    host.run("systemctl enable rsyslog")
+                    host.run("systemctl start rsyslog")
+                else:
+                    host.run("DEBIAN_FRONTEND=noninteractive apt-get install -y fail2ban")
+
+            # Блок 2: Спец-фикс для Debian (принудительно создаем лог-файл, чтобы f2b не падал)
+            if host.system_info.distribution.lower() == "debian":
+                host.run("touch /var/log/auth.log")
+
+            # Блок 3: Пытаемся запустить службу
+            host.run("systemctl enable fail2ban")
+            restart_cmd = host.run("systemctl restart fail2ban")
+
+            # Блок 4: Если запуск провалился — выводим системный журнал для дебага
+            if restart_cmd.rc != 0:
+                logs = host.run("journalctl -u fail2ban -n 15 --no-pager").stdout
+                pytest.fail(f"❌ fail2ban крашится при запуске на {name}!\nЛоги сервера:\n{logs}")
+
+            print(f"✅ fail2ban успешно починен и запущен на {name}")
+
+        # Финальная проверка
+        f2b_check = host.service("fail2ban")
+        assert f2b_check.is_running, f"⛔ Fail2Ban is NOT running on {name}"
+        assert f2b_check.is_enabled, f"⛔ Fail2Ban is NOT enabled on startup on {name}"
 
     @pytest.mark.xfail(reason="Root login required for current CI/CD (Task OPS-001)")
     def test_ssh_root_login_disabled(self, name, ip, user, password):

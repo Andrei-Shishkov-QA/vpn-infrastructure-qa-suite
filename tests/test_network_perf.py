@@ -5,7 +5,7 @@ import testinfra
 import urllib.parse
 from pythonping import ping
 
-# --- МАГИЯ ИМПОРТА ---
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inventory import SERVERS
 

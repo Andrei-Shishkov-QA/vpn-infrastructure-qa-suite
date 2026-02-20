@@ -1,26 +1,20 @@
 import pytest
 import testinfra
 import os
+import sys
 import urllib.parse  # <--- 1. Добавили библиотеку для кодирования паролей
 from dotenv import load_dotenv
 
 # Загружаем данные из .env файла
 load_dotenv()
 
-# Собираем список серверов
-servers = [
-    ("NL-AMS", os.getenv("HOST_NL"), os.getenv("USER_NL"), os.getenv("PASS_NL")),
-    ("AT-VIE", os.getenv("HOST_AT"), os.getenv("USER_AT"), os.getenv("PASS_AT")),
-    ("RU-MOW", os.getenv("HOST_RU"), os.getenv("USER_RU"), os.getenv("PASS_RU")),
-    ("DE-DUS", os.getenv("HOST_DE"), os.getenv("USER_DE"), os.getenv("PASS_DE")),
-]
-
-# Фильтруем пустые
-servers = [s for s in servers if s[1]]
+# Поднимаемся на уровень выше, чтобы импортировать inventory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from inventory import SERVERS
 
 
 @pytest.mark.smoke
-@pytest.mark.parametrize("name, ip, user, password", [s[:4] for s in servers], ids=[s[0] for s in servers])
+@pytest.mark.parametrize("name, ip, user, password", [s[:4] for s in SERVERS], ids=[s[0] for s in SERVERS])
 def test_server_connectivity(name, ip, user, password):
     """
         SMOKE TEST (REQ-000): Verifies SSH connectivity to the server.
