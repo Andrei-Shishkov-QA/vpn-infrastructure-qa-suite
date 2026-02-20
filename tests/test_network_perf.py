@@ -25,7 +25,7 @@ def get_host(ip, user, password):
 class TestNetworkPerformance:
 
     @pytest.mark.network
-    @pytest.mark.parametrize("name, ip, user, passw", [s[:4] for s in test_data])
+    @pytest.mark.parametrize("name, ip, user, passw", [s[:4] for s in test_data], ids=[s[0] for s in test_data])
     @pytest.mark.skipif(os.getenv("GITHUB_ACTIONS") == "true", reason="ICMP ping is blocked from GitHub Azure IPs")
     def test_latency_and_loss_from_client(self, name, ip, user, passw):
         """
@@ -45,7 +45,7 @@ class TestNetworkPerformance:
         assert avg_rtt < threshold, f"⚠️ SLOW PING on {name}: {avg_rtt}ms"
 
     @pytest.mark.network
-    @pytest.mark.parametrize("name, ip, user, passw", [s[:4] for s in test_data])
+    @pytest.mark.parametrize("name, ip, user, passw", [s[:4] for s in test_data], ids=[s[0] for s in test_data])
     def test_server_download_speed_http(self, name, ip, user, passw):
         """
         REQ-005 (Part 2): Скорость (HTTP Download).

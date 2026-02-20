@@ -19,7 +19,7 @@ def get_host(ip, user, password):
     return testinfra.get_host(connection_string, sudo=False)
 
 @pytest.mark.security
-@pytest.mark.parametrize("name, ip, user, password", [s[:4] for s in servers])
+@pytest.mark.parametrize("name, ip, user, password", [s[:4] for s in servers], ids=[s[0] for s in servers])
 class TestSecurityRules:
     """
     SEC-01: Deep Security Audit Suite.
