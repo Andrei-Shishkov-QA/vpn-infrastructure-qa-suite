@@ -20,7 +20,7 @@ servers = [s for s in servers if s[1]]
 
 
 @pytest.mark.smoke
-@pytest.mark.parametrize("name, ip, user, password", servers)
+@pytest.mark.parametrize("name, ip, user, password", [s[:4] for s in servers])
 def test_server_connectivity(name, ip, user, password):
     """
         SMOKE TEST (REQ-000): Verifies SSH connectivity to the server.
