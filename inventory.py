@@ -2,7 +2,11 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
+"""
+Infrastructure Inventory (Single Source of Truth).
+Dynamically loads server credentials from secure environment variables (.env).
+No sensitive data is hardcoded in this repository.
+"""
 # Вспомогательная функция для превращения строки "path1,path2" в список
 def get_backup_paths(env_var):
     raw = os.getenv(env_var, "")

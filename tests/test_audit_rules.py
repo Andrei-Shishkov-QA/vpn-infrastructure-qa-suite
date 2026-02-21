@@ -3,7 +3,12 @@ import testinfra
 import os
 import sys
 import urllib.parse
-
+"""
+    Requirement: REQ-003 - Intrusion Prevention System (Fail2Ban).
+    Logic: Verifies that 'fail2ban' is installed and actively running.
+    Self-Healing: If missing or crashed, the script automatically installs the package, 
+    resolves OS-specific dependencies (e.g., rsyslog for Debian 12), and restarts the service.
+    """
 # Добавляем корневую папку в путь поиска, чтобы Python увидел inventory.py
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -41,6 +46,7 @@ class TestSecurityRules:
             f"❌ Unknown OS: {os_info.distribution}"
 
     def test_firewall_status(self, name, ip, user, password):
+        assert False, "Специально ломаем тест для проверки Телеграма"
         """
         REQ-002: Firewall (UFW) must be active.
         Logic: We check the command output 'ufw status' explicitly.

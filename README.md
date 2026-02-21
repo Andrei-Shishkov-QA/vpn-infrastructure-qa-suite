@@ -4,8 +4,12 @@
 ![Pytest](https://img.shields.io/badge/Testing-Pytest-orange?style=flat-square&logo=pytest)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20(Ubuntu)-green?style=flat-square&logo=linux)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)
+[![Tests & Security Audit](https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite/actions)
+[![Allure Report](https://img.shields.io/badge/Allure%20Report-Live%20Status-blue?logo=allure)](https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/)
 
+👉 **[Click here to view the Interactive Allure Report (with test results and graphs)](https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/)**
 
+An automated end-to-end testing, self-healing, and security audit framework for a distributed VPN server infrastructure.
 ## 📖 Project Overview
 This repository contains the **Quality Assurance Framework** for a distributed high-availability network infrastructure serving 50+ active users. 
 
@@ -38,6 +42,42 @@ The system operates on a **Shared-Nothing Architecture** across 4 geographical z
 /manual_tests   # Checklists for Client-Side UAT
 ```
 
+## 📊 CI/CD & Allure Reporting
+
+[![Tests & Security Audit](https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite/actions)
+[![Allure Report](https://img.shields.io/badge/Allure%20Report-Live%20Status-blue?logo=allure)](https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/)
+The project features a fully automated CI/CD pipeline via **GitHub Actions** with daily health checks and an interactive **Allure Report** hosted on GitHub Pages.
+
+**🛡️ DevSecOps & Report Highlights:**
+* **Zero-Leak Architecture:** Two-tier security sanitization (`conftest.py` hook + `jq` pipeline filter) automatically masks sensitive credentials (passwords, IPs) in the public Allure report.
+* **Self-Healing Infrastructure:** Tests not only detect missing components (e.g., `fail2ban`) but automatically resolve dependencies and restart services on the fly.
+* **Environment-Aware:** Tests automatically adapt to the execution environment (e.g., ICMP ping tests are gracefully `skipped` in GitHub Actions to comply with Azure firewall policies).
+* **Expected Failures (`xfail`):** Tests verifying the disabling of root SSH access are marked as grey (`xfail`). This explicitly documents existing architectural constraints while keeping the pipeline green.
+
+### ⏱️ Automated Monitoring & Alerting
+
+The CI/CD pipeline is configured for continuous infrastructure monitoring:
+* **Scheduled Runs:** The test suite automatically executes daily at 03:00 AM (UTC) via GitHub Actions cron jobs to detect configuration drifts.
+* **On-Push Execution:** Tests run automatically on every code push to ensure infrastructure integrity.
+* **Instant Notifications:** If any test fails (e.g., server downtime or missing security packages), a Telegram bot instantly sends an alert with a direct link to the Allure report.
+
+### 💻 Local Development & Reporting
+
+To run tests and view the interactive graphs locally, Java and Allure CLI are required.
+
+**Prerequisites (Windows):**
+1. Install Java (OpenJDK 17): `winget install Microsoft.OpenJDK.17`
+2. Install Node.js (via the official website).
+3. Install Allure CLI: `npm install -g allure-commandline`
+
+**Running the Suite:**
+```bash
+# Execute tests and save raw data to the temp_results directory
+pytest --alluredir=temp_results
+
+# Generate and launch the interactive HTML report in your default browser
+allure serve temp_results
+```
 
 ## 💻 System Requirements
 
@@ -63,7 +103,7 @@ pytest tests/test_network_perf.py -s
 
 ## 📊 Infrastructure Status Monitor
 
-### 📊 Infrastructure Monitoring (REQ-009)
+### Infrastructure Monitoring (REQ-009)
 
 The project includes a custom Python script for deep health checks of all connected nodes. Unlike simple ping tools, it logs into servers via SSH to inspect internal state.
 

@@ -9,6 +9,8 @@ on:
       - '.gitignore'     # Игнорировать настройки гита
   pull_request:
     branches: [ "main", "master" ]
+  schedule:
+    - cron: '0 3 * * *'  # Запуск каждый день в 03:00 по UTC (07:00 по Еревану)
 
 permissions:
   contents: write
@@ -32,15 +34,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        # На всякий случай ставим allure-pytest явно, если его нет в requirements
         pip install allure-pytest
 
     - name: Create .env file from Secrets
-      # Мы создаем .env файл на лету, беря пароли из настроек GitHub
       run: |
         echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
         echo "TG_CHAT_ID=${{ secrets.TG_CHAT_ID }}" >> .env
-        # Добавляем первый сервер для теста
         echo "NODE_1_NAME=NL-AMS" >> .env
         echo "NODE_1_IP=${{ secrets.NODE_1_IP }}" >> .env
         echo "NODE_1_USER=${{ secrets.NODE_1_USER }}" >> .env
@@ -48,9 +47,6 @@ jobs:
         echo "NODE_1_BACKUP_PATHS=/etc/x-ui" >> .env
 
     - name: Run Tests with Allure
-      # Запускаем тесты и сохраняем результаты в папку allure-results
-      # continue-on-error: true означает "собери отчет, даже если тесты упали"
-      continue-on-error: true
       run: |
         sudo -E $(which python) -m pytest -v --alluredir=allure-results
 
@@ -77,3 +73,10 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: allure-history
+
+    - name: Send Telegram Alert on Failure
+      if: failure()
+      run: |
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
+        -d chat_id=${{ secrets.TG_CHAT_ID }} \
+        -d text="🚨 ВНИМАНИЕ! Тесты VPN-инфраструктуры УПАЛИ. Сервер недоступен или настройки сбились! Смотреть отчет: https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/"

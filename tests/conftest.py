@@ -2,8 +2,12 @@ import pytest
 import os
 from allure_commons import plugin_manager
 from allure_commons import hookimpl
-
-
+"""
+Global Security Hook (DevSecOps)
+Intercepts Allure reports in memory before serialization to disk.
+Destructively mutates and masks sensitive credentials (passwords, IPs, users) 
+to prevent security leaks in publicly hosted Allure HTML reports.
+"""
 # Класс-санитайзер, который перехватывает отчет перед записью на диск
 class AllureSecuritySanitizer:
     @hookimpl(tryfirst=True)
