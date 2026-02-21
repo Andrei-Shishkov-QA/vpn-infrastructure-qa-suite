@@ -1,0 +1,43 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"3. Проверяем, что хотя бы у одного сервера прописаны пути для бэкапа","0","test_inventory_has_backup_paths","tests","Sat Feb 21 09:30:36 UTC 2026","passed","Sat Feb 21 09:30:36 UTC 2026","","test_backup","",""
+"
+        REQ-001: SSH Root Login must be disabled.
+        Logic: Check /etc/ssh/sshd_config for 'PermitRootLogin no'.
+        (Marked as xfail: Currently we use root user for automation, architectural exception).
+        ","405","test_ssh_root_login_disabled[NL-AMS]","tests","Sat Feb 21 09:30:36 UTC 2026","skipped","Sat Feb 21 09:30:36 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-005 (Part 2): Скорость (HTTP Download).
+        Используем Global CDN (Cachefly) для проверки реальной ширины канала.
+        ","419","test_server_download_speed_http[NL-AMS]","tests","Sat Feb 21 09:30:37 UTC 2026","passed","Sat Feb 21 09:30:37 UTC 2026","TestNetworkPerformance","test_network_perf","",""
+"2. Проверяем, что токены загрузились","0","test_telegram_config","tests","Sat Feb 21 09:30:36 UTC 2026","passed","Sat Feb 21 09:30:36 UTC 2026","","test_backup","",""
+"
+        REQ-005 (Part 1): Пинг от тебя до сервера.
+        ","0","test_latency_and_loss_from_client[NL-AMS]","tests","Sat Feb 21 09:30:37 UTC 2026","skipped","Sat Feb 21 09:30:37 UTC 2026","TestNetworkPerformance","test_network_perf","",""
+"","1","test_firewall_status[NL-AMS]","tests","Sat Feb 21 09:30:33 UTC 2026","failed","Sat Feb 21 09:30:33 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        SMOKE TEST (REQ-000): Verifies SSH connectivity to the server.
+
+        This test covers multiple layers of the stack implicitly:
+        1. Network Layer: IP is reachable.
+        2. Transport Layer: Port 22 is open and accepting TCP connections.
+        3. Application (SSH): SSH Daemon is running and accepts the handshake.
+        4. Auth Layer: Credentials (root + password) are correct.
+        5. Execution: System can fork a process ('hostname') and return stdout.
+
+        If this test fails, further security auditing (REQ-001+) is impossible.
+        ","404","test_server_connectivity[NL-AMS]","tests","Sat Feb 21 09:30:37 UTC 2026","passed","Sat Feb 21 09:30:38 UTC 2026","","test_security_audit","",""
+"1. Проверяем, что папка backups/ создана и доступна для записи","0","test_backup_directory_exists","tests","Sat Feb 21 09:30:36 UTC 2026","passed","Sat Feb 21 09:30:36 UTC 2026","","test_backup","",""
+"
+        REQ-003: Intrusion Prevention System (Fail2Ban).
+        Self-Healing 2.0: Install if missing, AND restart if stopped/crashed.
+        ","2148","test_fail2ban_status[NL-AMS]","tests","Sat Feb 21 09:30:33 UTC 2026","passed","Sat Feb 21 09:30:36 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+    4. ИНТЕГРАЦИОННЫЙ ТЕСТ:
+    Создаем маленький файл и реально пытаемся отправить его в Телеграм.
+    Если придет 200 OK — значит, система доставки работает.
+    ","671","test_telegram_delivery_real","tests","Sat Feb 21 09:30:36 UTC 2026","passed","Sat Feb 21 09:30:37 UTC 2026","","test_backup","",""
+"
+        REQ-004: OS Standardization (Ubuntu/Debian).
+        Logic: Verify that the server runs a supported Linux distribution.
+        This prevents 'configuration drift' where servers become too different to manage.
+        ","2296","test_os_version[NL-AMS]","tests","Sat Feb 21 09:30:31 UTC 2026","passed","Sat Feb 21 09:30:33 UTC 2026","TestSecurityRules","test_audit_rules","",""
