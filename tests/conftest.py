@@ -20,7 +20,8 @@ def remote_host(request):
     # SAFE ENCODING: We use urllib to encode special characters in the password.
     # For example, if a password has '@' or '/', it will not break the SSH URL.
     safe_password = urllib.parse.quote_plus(password) if password else ""
-    connection_string = f"paramiko://{user}:{safe_password}@{ip}"
+    # We added ?timeout=20 to give slow servers more time to respond
+    connection_string = f"paramiko://{user}:{safe_password}@{ip}?timeout=20"
 
     # SMART LOGIC: Check if we need 'sudo'.
     # If the user is 'root', we do not need sudo. Otherwise, we enable it.
