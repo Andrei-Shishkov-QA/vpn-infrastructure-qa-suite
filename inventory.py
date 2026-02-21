@@ -24,7 +24,7 @@ _raw_servers = [
     (os.getenv("NODE_2_NAME", "Node-2"), os.getenv("NODE_2_IP"), os.getenv("NODE_2_USER"), os.getenv("NODE_2_PASS"), get_backup_paths("NODE_2_BACKUP_PATHS")),
     (os.getenv("NODE_3_NAME", "Node-3"), os.getenv("NODE_3_IP"), os.getenv("NODE_3_USER"), os.getenv("NODE_3_PASS"), get_backup_paths("NODE_3_BACKUP_PATHS")),
     (os.getenv("NODE_4_NAME", "Node-4"), os.getenv("NODE_4_IP"), os.getenv("NODE_4_USER"), os.getenv("NODE_4_PASS"), get_backup_paths("NODE_4_BACKUP_PATHS")),
-
+  # (os.getenv("NODE_5_NAME", "Node-5"), os.getenv("NODE_5_IP"), os.getenv("NODE_5_USER"), os.getenv("NODE_5_PASS"), get_backup_paths("NODE_5_BACKUP_PATHS")),
     # Хотите 5-й сервер? Раскомментируйте и добавьте в .env:
     # (os.getenv("NODE_5_NAME"), os.getenv("NODE_5_IP"), os.getenv("NODE_5_USER"), os.getenv("NODE_5_PASS"), get_backup_paths("NODE_5_BACKUP_PATHS")),
 ]

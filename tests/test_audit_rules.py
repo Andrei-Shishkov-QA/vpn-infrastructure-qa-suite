@@ -46,7 +46,6 @@ class TestSecurityRules:
             f"❌ Unknown OS: {os_info.distribution}"
 
     def test_firewall_status(self, name, ip, user, password):
-        assert False, "Специально ломаем тест для проверки Телеграма"
         """
         REQ-002: Firewall (UFW) must be active.
         Logic: We check the command output 'ufw status' explicitly.

@@ -40,11 +40,36 @@ jobs:
       run: |
         echo "TG_BOT_TOKEN=${{ secrets.TG_BOT_TOKEN }}" >> .env
         echo "TG_CHAT_ID=${{ secrets.TG_CHAT_ID }}" >> .env
+        # Server_1
         echo "NODE_1_NAME=NL-AMS" >> .env
         echo "NODE_1_IP=${{ secrets.NODE_1_IP }}" >> .env
         echo "NODE_1_USER=${{ secrets.NODE_1_USER }}" >> .env
         echo "NODE_1_PASS=${{ secrets.NODE_1_PASS }}" >> .env
-        echo "NODE_1_BACKUP_PATHS=/etc/x-ui" >> .env
+        echo "NODE_1_BACKUP_PATHS=/etc/x-ui,/opt/outline/persisted-state" >> .env
+        # Server_2
+        echo "NODE_2_NAME=AT-VIE" >> .env
+        echo "NODE_2_IP=${{ secrets.NODE_2_IP }}" >> .env
+        echo "NODE_2_USER=${{ secrets.NODE_2_USER }}" >> .env
+        echo "NODE_2_PASS=${{ secrets.NODE_2_PASS }}" >> .env
+        echo "NODE_2_BACKUP_PATHS=/etc/x-ui" >> .env      
+        # Server_3
+        echo "NODE_3_NAME=RU-MOW" >> .env
+        echo "NODE_3_IP=${{ secrets.NODE_3_IP }}" >> .env
+        echo "NODE_3_USER=${{ secrets.NODE_3_USER }}" >> .env
+        echo "NODE_3_PASS=${{ secrets.NODE_3_PASS }}" >> .env
+        echo "NODE_3_BACKUP_PATHS=/etc/x-ui" >> .env    
+        # Server_4
+        echo "NODE_4_NAME=DE-DUS" >> .env
+        echo "NODE_4_IP=${{ secrets.NODE_4_IP }}" >> .env
+        echo "NODE_4_USER=${{ secrets.NODE_4_USER }}" >> .env
+        echo "NODE_4_PASS=${{ secrets.NODE_4_PASS }}" >> .env
+        echo "NODE_4_BACKUP_PATHS=/var/lib/docker/volumes/remnawave_remnawave-db-data/_data" >> .env
+        # Server_5
+        # echo "NODE_5_NAME=NAME_your_server" >> .env
+        # echo "NODE_5_IP=${{ secrets.NODE_5_IP }}" >> .env
+        # echo "NODE_5_USER=${{ secrets.NODE_5_USER }}" >> .env
+        # echo "NODE_5_PASS=${{ secrets.NODE_5_PASS }}" >> .env
+        # echo "NODE_5_BACKUP_PATHS=BACKUP_PATHS_your server" >> .env
 
     - name: Run Tests with Allure
       run: |

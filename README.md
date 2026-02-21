@@ -54,6 +54,25 @@ The project features a fully automated CI/CD pipeline via **GitHub Actions** wit
 * **Environment-Aware:** Tests automatically adapt to the execution environment (e.g., ICMP ping tests are gracefully `skipped` in GitHub Actions to comply with Azure firewall policies).
 * **Expected Failures (`xfail`):** Tests verifying the disabling of root SSH access are marked as grey (`xfail`). This explicitly documents existing architectural constraints while keeping the pipeline green.
 
+### 📈 Scaling: How to Add a New Server
+
+The framework is designed to be easily scalable. To add a new VPN node to the continuous audit pipeline, follow these 3 steps:
+
+**1. Add GitHub Secrets**
+Go to your repository `Settings -> Secrets and variables -> Actions` and add the new credentials:
+* `NODE_X_IP`
+* `NODE_X_USER`
+* `NODE_X_PASS`
+
+**2. Update CI/CD Pipeline (`.github/workflows/ci.yml`)**
+Map the new secrets to the environment variables in the `Create .env file from Secrets` step:
+```yaml
+echo "NODE_X_NAME=New-Location" >> .env
+echo "NODE_X_IP=${{ secrets.NODE_X_IP }}" >> .env
+echo "NODE_X_USER=${{ secrets.NODE_X_USER }}" >> .env
+echo "NODE_X_PASS=${{ secrets.NODE_X_PASS }}" >> .env
+```
+
 ### ⏱️ Automated Monitoring & Alerting
 
 The CI/CD pipeline is configured for continuous infrastructure monitoring:
