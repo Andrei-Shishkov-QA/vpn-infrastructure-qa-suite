@@ -23,3 +23,5 @@ allure-report/
 
 # Pytest cache
 .pytest_cache/
+
+project_structure.txt
