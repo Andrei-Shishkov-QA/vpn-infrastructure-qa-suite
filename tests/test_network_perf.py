@@ -1,80 +1,65 @@
 import pytest
-import sys
+import allure
 import os
-import testinfra
-import urllib.parse
 from pythonping import ping
-
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from inventory import SERVERS
 
-test_data = [(s[0], s[1], s[2], s[3]) for s in SERVERS]
 
-
-def get_host(ip, user, password):
-    safe_password = urllib.parse.quote_plus(password) if password else ""
-    connection_string = f"paramiko://{user}:{safe_password}@{ip}"
-
-    # 🔥 УМНАЯ ЛОГИКА (Smart Sudo):
-    use_sudo = False if user == 'root' else True
-
-    return testinfra.get_host(connection_string, sudo=use_sudo)
-
-
+@allure.suite("Network Performance & Capacity")
+@pytest.mark.parametrize("remote_host", [s[:4] for s in SERVERS], ids=[s[0] for s in SERVERS], indirect=True)
 class TestNetworkPerformance:
 
+    @allure.id("REQ-005.1")
+    @allure.title("Network: Latency and Packet Loss (Client to Server)")
     @pytest.mark.network
-    @pytest.mark.parametrize("name, ip, user, passw", [s[:4] for s in test_data], ids=[s[0] for s in test_data])
-    @pytest.mark.skipif(os.getenv("GITHUB_ACTIONS") == "true", reason="ICMP ping is blocked from GitHub Azure IPs")
-    def test_latency_and_loss_from_client(self, name, ip, user, passw):
+    @pytest.mark.skipif(os.getenv("GITHUB_ACTIONS") == "true", reason="ICMP ping is blocked in GitHub Actions")
+    def test_latency_from_client(self, remote_host):
         """
-        REQ-005 (Part 1): Пинг от тебя до сервера.
+        Measures the Round-Trip Time (RTT) from the local machine to the server.
+        Ensures that latency is within acceptable limits for a stable VPN connection.
         """
-        print(f"\n📡 [Client -> Server] Pinging {name} ({ip})...")
-        response = ping(ip, count=4, verbose=False)
+        ip = remote_host.backend.hostname  # Get IP from the host object
+        print(f"\n📡 Pinging {remote_host.node_name} ({ip})...")
 
+        response = ping(ip, count=4)
         loss = response.packet_loss * 100
         avg_rtt = response.rtt_avg_ms
 
-        print(f"   📉 Packet Loss: {loss}%")
-        print(f"   ⏱️ Avg Latency: {avg_rtt} ms")
+        with allure.step(f"Analyze Ping results for {remote_host.node_name}"):
+            allure.attach(f"Loss: {loss}% | Avg RTT: {avg_rtt}ms", name="Ping Stats")
 
-        assert loss == 0, f"❌ PACKET LOSS on {name}: {loss}%"
-        threshold = 100 if "RU" in name else 300
-        assert avg_rtt < threshold, f"⚠️ SLOW PING on {name}: {avg_rtt}ms"
+            assert loss == 0, f"❌ Critical packet loss on {remote_host.node_name}: {loss}%"
 
+            # Thresholds: 100ms for RU nodes, 300ms for Global/EU nodes
+            threshold = 100 if "RU" in remote_host.node_name else 300
+            assert avg_rtt < threshold, f"⚠️ High latency on {remote_host.node_name}: {avg_rtt}ms"
+
+    @allure.id("REQ-005.2")
+    @allure.title("Network: Download Speed via Global CDN")
     @pytest.mark.network
-    @pytest.mark.parametrize("name, ip, user, passw", [s[:4] for s in test_data], ids=[s[0] for s in test_data])
-    def test_server_download_speed_http(self, name, ip, user, passw):
+    def test_server_download_speed(self, remote_host):
         """
-        REQ-005 (Part 2): Скорость (HTTP Download).
-        Используем Global CDN (Cachefly) для проверки реальной ширины канала.
+        Verifies the server's internet bandwidth by downloading a test file from a Global CDN.
+        This simulates real-world heavy usage (e.g., 4K video streaming).
         """
-        print(f"\n🚀 [Server -> Internet] CDN Speed Test on {name}...")
-        host = get_host(ip, user, passw)
-
-        # ✅ FIX: Используем Global CDN (Cachefly) вместо Selectel.
-        # Он автоматически выбирает ближайший сервер к каждому VPS.
+        # We use Cachefly CDN because it automatically selects the fastest mirror for each VPS
         target_url = "http://cachefly.cachefly.net/100mb.test"
 
-        # Таймаут 15 секунд. Если CDN не отдал файл за 15 сек - интернет совсем плохой.
-        cmd = f"curl -o /dev/null --silent --write-out '%{{speed_download}}' --max-time 15 --connect-timeout 5 {target_url}"
+        # Command to measure download speed in bytes/sec
+        cmd = f"curl -o /dev/null --silent --write-out '%{{speed_download}}' --max-time 20 --connect-timeout 10 {target_url}"
 
-        try:
-            result = host.run(cmd)
+        with allure.step("Execute speed test on remote server"):
+            result = remote_host.run(cmd)
 
             if result.rc != 0:
-                # Если Cachefly недоступен - это ЧП, лучше упасть с ошибкой, чем пропустить.
-                pytest.fail(f"⚠️ CDN unreachable: {result.stderr}")
+                pytest.fail(f"❌ Could not reach CDN from {remote_host.node_name}: {result.stderr}")
 
+            # Convert bytes/sec to Mbps (Megabits per second)
             bytes_sec = float(result.stdout.strip())
             mbps = (bytes_sec * 8) / 1_000_000
 
-            print(f"   🏎️ Download Speed: {mbps:.2f} Mbps")
+            print(f"🏎️  {remote_host.node_name} Speed: {mbps:.2f} Mbps")
+            allure.attach(f"Speed: {mbps:.2f} Mbps", name="Bandwidth Result")
 
-            # Порог 30 Мбит/с - это гарантия HD видео.
-            assert mbps > 30, f"❌ SLOW CONNECTION on {name}: {mbps:.2f} Mbps"
-
-        except Exception as e:
-            pytest.fail(f"🔥 Script Error: {e}")
+            # Requirement: Speed must be > 30 Mbps for high-quality streaming
+            assert mbps > 30, f"❌ Connection too slow on {remote_host.node_name}: {mbps:.2f} Mbps"
