@@ -1,0 +1,1 @@
+DEBUG    testinfra:base.py:328 RUN CommandResult(backend=<testinfra.backend.paramiko.ParamikoBackend object at 0x7f5e9f4f2a10>, exit_status=0, command=b'hostname', _stdout=b'noiseless-need.aeza.network\n', _stderr=b'')

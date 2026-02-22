@@ -1,0 +1,1 @@
+DEBUG    testinfra:base.py:328 RUN CommandResult(backend=<testinfra.backend.paramiko.ParamikoBackend object at 0x7f5e9f51a110>, exit_status=0, command=b'hostname', _stdout=b'v1426.hosted-by-vdsina.com\n', _stderr=b'')
