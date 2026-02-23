@@ -10,196 +10,182 @@
 👉 **[Click here to view the Interactive Allure Report (with test results and graphs)](https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/)**
 
 An automated end-to-end testing, self-healing, and security audit framework for a distributed VPN server infrastructure.
+
 ## 📖 Project Overview
 This repository contains the **Quality Assurance Framework** for a distributed high-availability network infrastructure serving 50+ active users. 
 
 Unlike standard "setup scripts," this project focuses on **Stability, Security, and Performance Testing** of a live environment. It demonstrates the transition from manual administration to automated engineering practices.
 
 **Key Features:**
-* **Infrastructure as Code Testing:** Automated audits of server configuration using `Testinfra`.
-* **Disaster Recovery:** Automated backup validation and restoring strategies.
-* **Network Analysis:** Latency and throughput monitoring (iperf3, MTR).
-* **Security Compliance:** Hardening checks (Fail2ban, UFW, SSH Config).
-
+* **Infrastructure as Code (IaC) Testing:** Automated audits of server configuration and system states using `Testinfra`.
+* **Active Security & Self-Healing:** Hardening checks (UFW, SSH Config) with automatic dependency resolution and service restarts (e.g., recovering a stopped `fail2ban`).
+* **DevSecOps & CI/CD:** Zero-leak reporting architecture that automatically masks sensitive credentials in Allure, fully integrated into GitHub Actions.
+* **Network Performance Analysis:** Automated validation of latency constraints and CDN download speeds across different geographical zones.
+* **Disaster Recovery & Monitoring:** Custom Python utilities for deep system health checks, backup validation, and instant Telegram alerting.
 
 ## 🏗️ Architecture
 The system operates on a **Shared-Nothing Architecture** across 4 geographical zones (NL, AT, RU, DE) to eliminate Single Points of Failure (SPOF).
 * *See full details in [Network Topology](docs/NETWORK_TOPOLOGY.md).*
 
-
 ## 🛠️ Tech Stack
-* **Language:** Python 3.10+ (Automation), Bash (Maintenance).
-* **Testing Frameworks:** Pytest, Testinfra.
-* **Network Tools:** iperf3, curl, MTR, nmap.
-* **Protocols:** VLESS (Reality), Shadowsocks, XTLS.
-
+* **Languages:** Python 3.10+ (Automation), Bash (Maintenance).
+* **QA Frameworks:** Pytest, Pytest-Testinfra, Paramiko (SSH backend).
+* **CI/CD & Reporting:** GitHub Actions, Allure Report, Telegram Bot API.
+* **Infrastructure & Network:** Docker, Systemd, UFW, Fail2ban, iperf3, curl.
+* **VPN Protocols:** VLESS (Reality), Shadowsocks, XTLS.
 
 ## 📂 Repository Structure
 ```text
-/docs           # Technical Documentation (Migration Report, Strategy, Topology)
-/tests          # Automated Tests (Security, API, Infrastructure)
-/scripts        # Maintenance & Utility Scripts (Backup, Benchmark)
-/manual_tests   # Checklists for Client-Side UAT
+├── .github/workflows/   # CI/CD pipelines (daily runs & on-push checks)
+├── docs/                # Technical Docs (Migration Report, Strategy, Topology)
+├── manual_tests/        # Checklists and test cases for Client-Side UAT
+├── scripts/             # Python CLI tools (monitor.py, backup.py)
+├── tests/               # Pytest suite (Security, Network, Backup validation)
+├── conftest.py          # Pytest fixtures and Allure DevSecOps sanitization
+└── inventory.py         # Dynamic SSOT (Single Source of Truth) for server nodes
 ```
-
-## 📊 CI/CD & Allure Reporting
-
-[![Tests & Security Audit](https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite/actions)
-[![Allure Report](https://img.shields.io/badge/Allure%20Report-Live%20Status-blue?logo=allure)](https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/)
-The project features a fully automated CI/CD pipeline via **GitHub Actions** with daily health checks and an interactive **Allure Report** hosted on GitHub Pages.
-
-**🛡️ DevSecOps & Report Highlights:**
-* **Zero-Leak Architecture:** Two-tier security sanitization (`conftest.py` hook + `jq` pipeline filter) automatically masks sensitive credentials (passwords, IPs) in the public Allure report.
-* **Self-Healing Infrastructure:** Tests not only detect missing components (e.g., `fail2ban`) but automatically resolve dependencies and restart services on the fly.
-* **Environment-Aware:** Tests automatically adapt to the execution environment (e.g., ICMP ping tests are gracefully `skipped` in GitHub Actions to comply with Azure firewall policies).
-* **Expected Failures (`xfail`):** Tests verifying the disabling of root SSH access are marked as grey (`xfail`). This explicitly documents existing architectural constraints while keeping the pipeline green.
-
-### 📈 Scaling: How to Add a New Server
-
-The framework is designed to be easily scalable. To add a new VPN node to the continuous audit pipeline, follow these 3 steps:
-
-**1. Add GitHub Secrets**
-Go to your repository `Settings -> Secrets and variables -> Actions` and add the new credentials:
-* `NODE_X_IP`
-* `NODE_X_USER`
-* `NODE_X_PASS`
-
-**2. Update CI/CD Pipeline (`.github/workflows/ci.yml`)**
-Map the new secrets to the environment variables in the `Create .env file from Secrets` step:
-```yaml
-echo "NODE_X_NAME=New-Location" >> .env
-echo "NODE_X_IP=${{ secrets.NODE_X_IP }}" >> .env
-echo "NODE_X_USER=${{ secrets.NODE_X_USER }}" >> .env
-echo "NODE_X_PASS=${{ secrets.NODE_X_PASS }}" >> .env
-```
-
-### ⏱️ Automated Monitoring & Alerting
-
-The CI/CD pipeline is configured for continuous infrastructure monitoring:
-* **Scheduled Runs:** The test suite automatically executes daily at 03:00 AM (UTC) via GitHub Actions cron jobs to detect configuration drifts.
-* **On-Push Execution:** Tests run automatically on every code push to ensure infrastructure integrity.
-* **Instant Notifications:** If any test fails (e.g., server downtime or missing security packages), a Telegram bot instantly sends an alert with a direct link to the Allure report.
-
-### 💻 Local Development & Reporting
-
-To run tests and view the interactive graphs locally, Java and Allure CLI are required.
-
-**Prerequisites (Windows):**
-1. Install Java (OpenJDK 17): `winget install Microsoft.OpenJDK.17`
-2. Install Node.js (via the official website).
-3. Install Allure CLI: `npm install -g allure-commandline`
-
-**Running the Suite:**
-```bash
-# Execute tests and save raw data to the temp_results directory
-pytest --alluredir=temp_results
-
-# Generate and launch the interactive HTML report in your default browser
-allure serve temp_results
-```
-
-## 💻 System Requirements
-
-### Control Node (Where you run tests)
-* **OS:** Windows, macOS, or Linux
-* **Python:** 3.10 or higher
-* **Network:** Access to target servers via SSH (Port 22)
-
-### Target Nodes (VPN Servers)
-The automation scripts assume the following environment on the servers:
-* **OS:** Ubuntu 20.04+ OR Debian 11+
-* **Access:** SSH access with Sudo/Root privileges
-* **Package Manager:** `apt` (checking for `ufw`, `fail2ban`, `iperf3`)
-* **Init System:** `systemd`
-
-### Network Performance (REQ-005)
-*Corresponds to Test Case: NET-01*
-Checks Latency (Ping) and Bandwidth (Download Speed from Global CDN).
-```bash
-pytest tests/test_network_perf.py -s
-#Flag -s allows seeing real-time speed results in Mbps
-```
-
-## 📊 Infrastructure Status Monitor
-
-### Infrastructure Monitoring (REQ-009)
-
-The project includes a custom Python script for deep health checks of all connected nodes. Unlike simple ping tools, it logs into servers via SSH to inspect internal state.
-
-**Capabilities:**
-* **Smart Service Detection:** Automatically identifies if a node runs Docker (Outline/Remnawave) or Systemd (X-UI) and checks the corresponding process.
-* **Resource Guard:** Warns on Low Disk (<15%) or High RAM (>90%).
-* **Cross-Platform:** Works on Windows, Linux, and macOS.
-
-**How to run:**
-```bash
-python scripts/monitor.py
-```
-Sample Output:
-🖥️  NL-AMS [80.85.x.x]
-  ├── ✅ PING            : Latency < 1s
-  ├── ✅ PORT 443        : Open (HTTPS)
-  ├── ❌ DISK            : 93% Used (CRITICAL)
-  ├── ✅ DOCKER: OUTLINE : Active / Running
-
-## 📦 Backup System (Disaster Recovery)
-
-The project includes a tool to backup VPN configurations (3x-ui databases, Outline keys, Docker volumes) and send them to Telegram.
-
-### 1. Setup Telegram Bot
-1. Create a bot via **@BotFather** in Telegram -> Get `Bot Token`.
-2. Find your Chat ID via **@userinfobot** -> Get `Chat ID`.
-3. Add them to `.env`:
-   ```ini
-   TG_BOT_TOKEN=123456:ABC-DEF...
-   TG_CHAT_ID=123456789
-   ```
-### 2. Configure Backup Paths
-   Define which folders to backup for each server in .env.
-   (Note: Use comma to separate multiple paths).
-   ```ini
-   NODE_1_BACKUP_PATHS=/etc/x-ui,/opt/outline/persisted-state
-   NODE_4_BACKUP_PATHS=/var/lib/docker/volumes/remnawave_db_data/_data
-   ```
-### 3. Run Backup
-```bash
-python scripts/backup.py
-```
-Result: Archives will be saved in backups/ folder and sent to your Telegram chat.
-
+---
 ## 🚀 Quick Start (Installation)
 
 **1. Clone the repository:**
 ```bash
 git clone https://github.com/Andrei-Shishkov-QA/vpn-infrastructure-qa-suite.git
+cd vpn-infrastructure-qa-suite
 ```
-
 **2. Install dependencies:**
 ```bash
+python -m venv .venv
+source .venv/bin/activate  # Or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
 ```
-
 **3. Configure Environment:**
-Create a .env file with your node credentials (see .env.example).
-Fill in your Real IP and Passwords in .env.
-
-
-## 🛠️ How to Run Tests (Test Menu)
-**4. Run Security Audit (Smoke Tests):**
+Create a .env file from the provided template:
 ```bash
-pytest -m "smoke"
+cp .env.example .env
 ```
+Open .env and fill in your real Server IPs, SSH Passwords, and Telegram Bot credentials. Note: You do not need to manually edit inventory.py; it dynamically loads your servers directly from the .env file.
+**4. Run Automated Tests:**
+```bash
+# Run critical infrastructure checks (Smoke)
+pytest -m smoke
 
-1. Security Audit & Smoke Tests (REQ-001...REQ-004)
-Checks SSH availability, OS version, Firewall status, and Root login restrictions.
+# Run Network Performance with real-time CLI output in Mbps
+pytest tests/test_network_perf.py -s
 
-**5. Run Manual Validation (UAT):**
-For UI/UX and client-side connectivity checks (REQ-007, REQ-008), follow the standardized checklist:
-* 📄 **File:** [MOBILE_CLIENT_CHECKLIST.md](manual_tests/MOBILE_CLIENT_CHECKLIST.md)
-* **Scope:** IP Leak tests, DPI bypass verification, and battery optimization checks for Android/iOS.
+# Run the full suite and generate Allure raw data
+pytest --alluredir=temp_results
+```
+**5. Run Utility Scripts:**
+```bash
+# Check live infrastructure health (Disk, RAM, Docker, VPN services)
+python scripts/monitor.py
 
-## 📈 Documentation Links
-[Test Strategy](docs/TEST_STRATEGY.md) & RTM - What and how we test.
-[Migration Report](docs/MIGRATION_REPORT.md) - Evolution from Single-Node to HA.
-[Mobile Client](manual_tests/MOBILE_CLIENT_CHECKLIST.md) Checklist - User Acceptance Testing..
-📄 **[Sample Test Case: Privacy Leak](manual_tests/TC-MAN-003_Privacy_Leak.md)** — Example of a detailed manual test artifact (Steps & Expected Results).
+# Execute remote backups and send archives to Telegram
+python scripts/backup.py
+```
+---
+
+## 💻 System & Network Requirements
+
+### Control Node (Execution Environment)
+* **OS:** Windows, macOS, or Linux
+* **Python:** 3.10 or higher
+* **Network:** Access to target servers via SSH (Port 22)
+
+### Target Nodes (VPN Servers)
+* **OS:** Ubuntu 20.04+ OR Debian 11+
+* **Access:** SSH access with Sudo/Root privileges
+* **Init System:** `systemd`
+* **Package Manager:** `apt` (required for the self-healing logic to automatically resolve missing dependencies like `fail2ban`).
+
+### ⚠️ Network Resilience Constraints
+The Testinfra framework relies on rapid SSH handshakes. To ensure reliable test execution, the executing network must meet the following criteria:
+
+| Metric             | Optimal (Green) | Risky (Yellow) | Critical (Red) |
+|:-------------------|:----------------|:---------------|:---------------|
+| **Latency (Ping)** | < 150ms         | 150ms - 350ms  | > 400ms        |
+| **Jitter**         | < 20ms          | 20ms - 100ms   | > 150ms        |
+| **Packet Loss**    | 0%              | < 2%           | > 5%           |
+
+> **Troubleshooting:** If tests randomly fail with `TimeoutError` during the SSH handshake, it indicates ISP throttling or high jitter on the executing network. This suite is optimized for stable CI/CD environments (like GitHub Actions). For local execution on unstable networks, use a Mobile Hotspot or adjust the connection parameters in `tests/conftest.py`.
+
+---
+
+## 📊 CI/CD & Allure Reporting
+
+The project features a fully automated CI/CD pipeline via **GitHub Actions** with daily health checks and an interactive **Allure Report** hosted on GitHub Pages.
+
+**🛡️ DevSecOps & Pipeline Highlights:**
+* **Zero-Leak Architecture:** Two-tier security sanitization (`conftest.py` hook + `jq` pipeline filter) automatically masks sensitive credentials (passwords, IPs) in the public Allure report.
+* **Self-Healing Infrastructure:** Tests not only detect missing components (e.g., `fail2ban`) but automatically resolve dependencies and restart services on the fly.
+* **Environment-Aware:** Tests automatically adapt to the execution environment (e.g., ICMP ping tests are gracefully `skipped` in GitHub Actions to comply with Azure firewall policies).
+* **Expected Failures (`xfail`):** Tests verifying the disabling of root SSH access are marked as grey (`xfail`). This explicitly documents existing architectural constraints while keeping the pipeline green.
+* **Instant Alerting:** If any critical infrastructure test fails during the automated run, a Telegram bot instantly sends an alert with a direct link to the Allure report.
+
+> **💡 Pro Tip for Contributors (`[skip ci]`):**
+> If you are updating documentation or making non-code changes, append `[skip ci]` to your commit message (e.g., `docs: update README [skip ci]`). This tells GitHub Actions to skip the pipeline run, saving CI compute minutes.
+
+### 📈 Scaling: How to Add a New Server
+To add a new VPN node to the continuous audit pipeline:
+1. Go to repository `Settings -> Secrets and variables -> Actions` and add credentials (`NODE_X_IP`, `NODE_X_USER`, `NODE_X_PASS`).
+2. Update `.github/workflows/ci.yml` to map the new secrets to `.env`.
+3. Add the node to `inventory.py`.
+
+### 💻 Local Reporting
+To view interactive graphs locally (requires Java and Node.js):
+```bash
+npm install -g allure-commandline
+allure serve temp_results
+```
+---
+
+## 🛠️ Core Infrastructure Tools
+
+### 📊 Infrastructure Status Monitor (REQ-009)
+The project includes a custom Python script for deep health checks. Unlike simple ping tools, it logs into servers via SSH to inspect internal state.
+
+**Capabilities:**
+* **Smart Service Detection:** Automatically identifies if a node runs Docker (Outline/Remnawave) or Systemd (X-UI).
+* **Resource Guard:** Warns on Low Disk (<15%) or High RAM (>90%).
+
+**Execution:**
+```bash
+python scripts/monitor.py
+```
+*Sample Output:*
+```text
+🖥️  NL-AMS [80.85.x.x]
+  ├── ✅ PING            : Reachable
+  ├── ✅ PORT 443        : Open (HTTPS/VPN)
+  ├── ❌ DISK            : 93% Used (CRITICAL)
+  ├── ✅ DOCKER: OUTLINE : Active
+```
+---
+### 📦 Backup System (Disaster Recovery)
+
+A utility to backup VPN configurations (x-ui databases, Outline keys, Docker volumes) directly to Telegram.
+
+**Setup:**
+1. Get Telegram Bot Token and Chat ID.
+2. Add to `.env`: `TG_BOT_TOKEN=...` and `TG_CHAT_ID=...`
+3. Define folders in `.env`: `NODE_1_BACKUP_PATHS=/etc/x-ui,/opt/outline`
+
+**Execution:**
+```bash
+python scripts/backup.py
+```
+*Archives are saved locally in `/backups` and securely sent to Telegram.*
+
+---
+## 📈 Documentation & Manual Tests
+
+While automated tests cover the infrastructure layer, client-side validation is documented in our manual test artifacts.
+
+**Architecture & Strategy:**
+* 📄 **[QA Test Strategy & RTM](docs/TEST_STRATEGY.md)** — What and how we test (Requirements Traceability Matrix).
+* 📄 **[Migration Report](docs/MIGRATION_REPORT.md)** — Evolution from a Single-Node to an HA Architecture.
+* 📄 **[Network Topology](docs/NETWORK_TOPOLOGY.md)** — Visual mapping of the Shared-Nothing setup.
+
+**Manual UAT (User Acceptance Testing):**
+* 📱 **[Mobile Client Checklist](manual_tests/MOBILE_CLIENT_CHECKLIST.md)** — Step-by-step checklist for IP Leak, DPI bypass, and battery optimization (Android/iOS).
+* 🐛 **[Sample Test Case: Privacy Leak](manual_tests/TC-MAN-003_Privacy_Leak.md)** — Example of a detailed manual test artifact with Expected Results.
