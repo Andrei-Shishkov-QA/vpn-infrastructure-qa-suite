@@ -1,10 +1,10 @@
-import os
-import sys
-import time
-import tarfile
-import requests
-from paramiko import SSHClient, AutoAddPolicy
-from scp import SCPClient
+#import os
+#import sys
+#import time
+#import tarfile
+#import requests
+#from paramiko import SSHClient, AutoAddPolicy
+#from scp import SCPClient
 
 # Add project root to sys.path to import inventory.py
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
