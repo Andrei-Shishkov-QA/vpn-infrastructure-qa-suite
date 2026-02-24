@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [ "main", "master" ]
   schedule:
-    - cron: '0 3 * * *'  # Запуск каждый день в 03:00 по UTC (07:00 по Еревану)
+    - cron: '0 2 * * *'  # Запуск каждый день в 02:00 по UTC (06:00 по Еревану)
 
 permissions:
   contents: write
@@ -64,16 +64,15 @@ jobs:
         echo "NODE_4_USER=${{ secrets.NODE_4_USER }}" >> .env
         echo "NODE_4_PASS=${{ secrets.NODE_4_PASS }}" >> .env
         echo "NODE_4_BACKUP_PATHS=/var/lib/docker/volumes/remnawave_remnawave-db-data/_data" >> .env
-        # Server_5
-        # echo "NODE_5_NAME=NAME_your_server" >> .env
-        # echo "NODE_5_IP=${{ secrets.NODE_5_IP }}" >> .env
-        # echo "NODE_5_USER=${{ secrets.NODE_5_USER }}" >> .env
-        # echo "NODE_5_PASS=${{ secrets.NODE_5_PASS }}" >> .env
-        # echo "NODE_5_BACKUP_PATHS=BACKUP_PATHS_your server" >> .env
 
     - name: Run Tests with Allure
       run: |
         sudo -E $(which python) -m pytest -v --alluredir=allure-results
+
+    - name: Run Scheduled Infrastructure Backup
+      if: github.event_name == 'schedule'
+      run: |
+        python scripts/backup.py
 
     - name: DevSecOps Fallback - Clean JSON artifacts
       if: always()
@@ -104,4 +103,4 @@ jobs:
       run: |
         curl -s -X POST https://api.telegram.org/bot${{ secrets.TG_BOT_TOKEN }}/sendMessage \
         -d chat_id=${{ secrets.TG_CHAT_ID }} \
-        -d text="🚨 ВНИМАНИЕ! Тесты VPN-инфраструктуры УПАЛИ. Сервер недоступен или настройки сбились! Смотреть отчет: https://Andrei-Shishkov-QA.github.io/vpn-infrastructure-qa-suite/"
+        -d text="🚨 ATTENTION! VPN infrastructure tests have FAILED. The server is unavailable or the settings are incorrect! See the report: https://andrei-shishkov-qa.github.io/vpn-infrastructure-qa-suite/"
