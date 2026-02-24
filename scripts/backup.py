@@ -31,7 +31,7 @@ def send_to_telegram(file_path, caption):
     try:
         with open(file_path, "rb") as f:
             files = {"document": f}
-            data = {"chat_id": TG_CHAT_ID, "disable_notification": True, "caption": caption}
+            data = {"chat_id": TG_CHAT_ID, "disable_notification": "true", "caption": caption}
 
             response = requests.post(url, files=files, data=data)
 

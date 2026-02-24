@@ -45,6 +45,26 @@ The system operates on a **Shared-Nothing Architecture** across 4 geographical z
 └── inventory.py         # Dynamic SSOT (Single Source of Truth) for server nodes
 ```
 ---
+
+## 🤖 CI/CD Automation Flow (Cheat Sheet)
+
+This project utilizes GitHub Actions for continuous integration, testing, and disaster recovery. The pipeline behavior changes dynamically based on the trigger:
+
+### 1. Code Push / Pull Request (Active Development)
+* **Execution:** Runs the L1 Security & Connectivity test suite (`pytest`). Generates and publishes the Allure Report.
+* **Alerting & Output:** Sends a silent "Canary" test file (`test_connection.txt`) to Telegram to verify API connectivity. 
+* *Note: Server backups are NOT triggered during routine code pushes to avoid traffic overload.*
+
+### 2. Scheduled Run (Nightly Cron - 06:00 AMT)
+* **Execution:** Runs the full test suite + Triggers the Disaster Recovery script (`scripts/backup.py`). Generates the Allure Report.
+* **Alerting & Output:** Silently delivers the `test_connection.txt` canary file AND the `.tar.gz` infrastructure backup archives directly to the Telegram bot. (Notifications are muted to prevent early morning disturbances).
+
+### 3. CI/CD Failure (Incident Response)
+* **Execution:** If any infrastructure test fails (e.g., server offline, firewall down), the pipeline fails but still forces the Allure Report generation (`if: always()`).
+* **Alerting & Output:** Immediately sends a **CRITICAL loud alert (🚨)** to Telegram with a direct link to the generated Allure Report for rapid debugging.
+
+---
+
 ## 🚀 Quick Start (Installation)
 
 **1. Clone the repository:**
