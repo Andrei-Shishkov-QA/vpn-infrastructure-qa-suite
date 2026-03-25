@@ -1,0 +1,157 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+        Verifies Fail2Ban service.
+        If it is missing or stopped, the test attempts to fix the system automatically.
+        ","1457","Audit: Fail2Ban Service with Self-Healing","tests","Wed Mar 25 04:08:37 UTC 2026","passed","Wed Mar 25 04:08:38 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Verifies the server's internet bandwidth by downloading a test file from a Global CDN.
+        This simulates real-world heavy usage (e.g., 4K video streaming).
+        ","5678","Network: Download Speed via Global CDN","tests","Wed Mar 25 04:08:20 UTC 2026","passed","Wed Mar 25 04:08:25 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"Ensures that the Uncomplicated Firewall (UFW) is active and protecting the node.","282","Audit: Firewall (UFW) Status","tests","Wed Mar 25 04:08:31 UTC 2026","passed","Wed Mar 25 04:08:32 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Verifies that the server is reachable and accepting SSH commands.
+        This is the foundation for all other infrastructure tests.
+        ","323","Smoke Test: SSH Connectivity","tests","Wed Mar 25 04:08:26 UTC 2026","passed","Wed Mar 25 04:08:26 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Verifies Fail2Ban service.
+        If it is missing or stopped, the test attempts to fix the system automatically.
+        ","1435","Audit: Fail2Ban Service with Self-Healing","tests","Wed Mar 25 04:08:34 UTC 2026","passed","Wed Mar 25 04:08:35 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"Standardization check: Ensures the node runs a supported Linux version.","1041","Audit: OS Distribution Compliance","tests","Wed Mar 25 04:08:30 UTC 2026","passed","Wed Mar 25 04:08:31 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Verifies the server's internet bandwidth by downloading a test file from a Global CDN.
+        This simulates real-world heavy usage (e.g., 4K video streaming).
+        ","3397","Network: Download Speed via Global CDN","tests","Wed Mar 25 04:08:16 UTC 2026","passed","Wed Mar 25 04:08:20 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"Standardization check: Ensures the node runs a supported Linux version.","1365","Audit: OS Distribution Compliance","tests","Wed Mar 25 04:08:29 UTC 2026","passed","Wed Mar 25 04:08:30 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        REQ-001: SSH Root Login must be disabled.
+        Logic: Check /etc/ssh/sshd_config for 'PermitRootLogin no'.
+        (Marked as xfail: Currently we use root user for automation, architectural exception).
+        ","236","test_ssh_root_login_disabled[NL-AMS]","tests","Wed Mar 25 04:08:09 UTC 2026","skipped","Wed Mar 25 04:08:10 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"Standardization check: Ensures the node runs a supported Linux version.","1021","Audit: OS Distribution Compliance","tests","Wed Mar 25 04:08:26 UTC 2026","passed","Wed Mar 25 04:08:27 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        REQ-001: SSH Root Login must be disabled.
+        Logic: Check /etc/ssh/sshd_config for 'PermitRootLogin no'.
+        (Marked as xfail: Currently we use root user for automation, architectural exception).
+        ","332","test_ssh_root_login_disabled[RU-MOW]","tests","Wed Mar 25 04:08:10 UTC 2026","skipped","Wed Mar 25 04:08:10 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+    Verifies that the Telegram Bot API is accessible and can send documents.
+    This acts as a 'Canary' test for our Disaster Recovery alerting channel.
+    ","505","test_telegram_connection","tests","Wed Mar 25 04:08:38 UTC 2026","passed","Wed Mar 25 04:08:39 UTC 2026","","test_telegram_api","",""
+"
+        Verifies Fail2Ban service.
+        If it is missing or stopped, the test attempts to fix the system automatically.
+        ","1385","Audit: Fail2Ban Service with Self-Healing","tests","Wed Mar 25 04:08:32 UTC 2026","passed","Wed Mar 25 04:08:34 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Verifies that the server is reachable and accepting SSH commands.
+        This is the foundation for all other infrastructure tests.
+        ","244","Smoke Test: SSH Connectivity","tests","Wed Mar 25 04:08:26 UTC 2026","passed","Wed Mar 25 04:08:26 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"Standardization check: Ensures the node runs a supported Linux version.","1027","Audit: OS Distribution Compliance","tests","Wed Mar 25 04:08:27 UTC 2026","passed","Wed Mar 25 04:08:29 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        REQ-004: OS Standardization (Ubuntu/Debian).
+        Logic: Verify that the server runs a supported Linux distribution.
+        This prevents 'configuration drift' where servers become too different to manage.
+        ","2888","test_os_version[RU-MOW]","tests","Wed Mar 25 04:07:53 UTC 2026","passed","Wed Mar 25 04:07:56 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-001: SSH Root Login must be disabled.
+        Logic: Check /etc/ssh/sshd_config for 'PermitRootLogin no'.
+        (Marked as xfail: Currently we use root user for automation, architectural exception).
+        ","247","test_ssh_root_login_disabled[DE-DUS]","tests","Wed Mar 25 04:08:10 UTC 2026","skipped","Wed Mar 25 04:08:11 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-004: OS Standardization (Ubuntu/Debian).
+        Logic: Verify that the server runs a supported Linux distribution.
+        This prevents 'configuration drift' where servers become too different to manage.
+        ","2692","test_os_version[AT-VIE]","tests","Wed Mar 25 04:07:50 UTC 2026","passed","Wed Mar 25 04:07:53 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-004: OS Standardization (Ubuntu/Debian).
+        Logic: Verify that the server runs a supported Linux distribution.
+        This prevents 'configuration drift' where servers become too different to manage.
+        ","3930","test_os_version[DE-DUS]","tests","Wed Mar 25 04:07:56 UTC 2026","passed","Wed Mar 25 04:08:00 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-001: SSH Root Login must be disabled.
+        Logic: Check /etc/ssh/sshd_config for 'PermitRootLogin no'.
+        (Marked as xfail: Currently we use root user for automation, architectural exception).
+        ","270","test_ssh_root_login_disabled[AT-VIE]","tests","Wed Mar 25 04:08:10 UTC 2026","skipped","Wed Mar 25 04:08:10 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-003: Intrusion Prevention System (Fail2Ban).
+        Self-Healing 2.0: Install if missing, AND restart if stopped/crashed.
+        ","2076","test_fail2ban_status[AT-VIE]","tests","Wed Mar 25 04:08:03 UTC 2026","passed","Wed Mar 25 04:08:05 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-004: OS Standardization (Ubuntu/Debian).
+        Logic: Verify that the server runs a supported Linux distribution.
+        This prevents 'configuration drift' where servers become too different to manage.
+        ","2069","test_os_version[NL-AMS]","tests","Wed Mar 25 04:07:48 UTC 2026","passed","Wed Mar 25 04:07:50 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-002: Firewall (UFW) must be active.
+        Logic: We check the command output 'ufw status' explicitly.
+        We expect to see 'Status: active'. This covers both Ubuntu and Debian correctly,
+        avoiding false negatives from systemd service status.
+        ","429","test_firewall_status[DE-DUS]","tests","Wed Mar 25 04:08:01 UTC 2026","passed","Wed Mar 25 04:08:01 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-003: Intrusion Prevention System (Fail2Ban).
+        Self-Healing 2.0: Install if missing, AND restart if stopped/crashed.
+        ","1747","test_fail2ban_status[NL-AMS]","tests","Wed Mar 25 04:08:01 UTC 2026","passed","Wed Mar 25 04:08:03 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"Ensures that the Uncomplicated Firewall (UFW) is active and protecting the node.","327","Audit: Firewall (UFW) Status","tests","Wed Mar 25 04:08:32 UTC 2026","passed","Wed Mar 25 04:08:32 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        REQ-003: Intrusion Prevention System (Fail2Ban).
+        Self-Healing 2.0: Install if missing, AND restart if stopped/crashed.
+        ","2494","test_fail2ban_status[RU-MOW]","tests","Wed Mar 25 04:08:05 UTC 2026","passed","Wed Mar 25 04:08:07 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        Measures the Round-Trip Time (RTT) from the local machine to the server.
+        Ensures that latency is within acceptable limits for a stable VPN connection.
+        ","0","Network: Latency and Packet Loss (Client to Server)","tests","Wed Mar 25 04:08:11 UTC 2026","skipped","Wed Mar 25 04:08:11 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"
+        Measures the Round-Trip Time (RTT) from the local machine to the server.
+        Ensures that latency is within acceptable limits for a stable VPN connection.
+        ","0","Network: Latency and Packet Loss (Client to Server)","tests","Wed Mar 25 04:08:11 UTC 2026","skipped","Wed Mar 25 04:08:11 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"
+        Verifies the server's internet bandwidth by downloading a test file from a Global CDN.
+        This simulates real-world heavy usage (e.g., 4K video streaming).
+        ","4367","Network: Download Speed via Global CDN","tests","Wed Mar 25 04:08:12 UTC 2026","passed","Wed Mar 25 04:08:16 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"
+        REQ-002: Firewall (UFW) must be active.
+        Logic: We check the command output 'ufw status' explicitly.
+        We expect to see 'Status: active'. This covers both Ubuntu and Debian correctly,
+        avoiding false negatives from systemd service status.
+        ","335","test_firewall_status[AT-VIE]","tests","Wed Mar 25 04:08:00 UTC 2026","passed","Wed Mar 25 04:08:00 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        Verifies the server's internet bandwidth by downloading a test file from a Global CDN.
+        This simulates real-world heavy usage (e.g., 4K video streaming).
+        ","1421","Network: Download Speed via Global CDN","tests","Wed Mar 25 04:08:11 UTC 2026","passed","Wed Mar 25 04:08:12 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"
+        Verifies that the server is reachable and accepting SSH commands.
+        This is the foundation for all other infrastructure tests.
+        ","238","Smoke Test: SSH Connectivity","tests","Wed Mar 25 04:08:25 UTC 2026","passed","Wed Mar 25 04:08:26 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Measures the Round-Trip Time (RTT) from the local machine to the server.
+        Ensures that latency is within acceptable limits for a stable VPN connection.
+        ","0","Network: Latency and Packet Loss (Client to Server)","tests","Wed Mar 25 04:08:11 UTC 2026","skipped","Wed Mar 25 04:08:11 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
+"
+        Verifies Fail2Ban service.
+        If it is missing or stopped, the test attempts to fix the system automatically.
+        ","1912","Audit: Fail2Ban Service with Self-Healing","tests","Wed Mar 25 04:08:35 UTC 2026","passed","Wed Mar 25 04:08:37 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        REQ-002: Firewall (UFW) must be active.
+        Logic: We check the command output 'ufw status' explicitly.
+        We expect to see 'Status: active'. This covers both Ubuntu and Debian correctly,
+        avoiding false negatives from systemd service status.
+        ","280","test_firewall_status[NL-AMS]","tests","Wed Mar 25 04:08:00 UTC 2026","passed","Wed Mar 25 04:08:00 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-002: Firewall (UFW) must be active.
+        Logic: We check the command output 'ufw status' explicitly.
+        We expect to see 'Status: active'. This covers both Ubuntu and Debian correctly,
+        avoiding false negatives from systemd service status.
+        ","330","test_firewall_status[RU-MOW]","tests","Wed Mar 25 04:08:00 UTC 2026","failed","Wed Mar 25 04:08:01 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"
+        REQ-003: Intrusion Prevention System (Fail2Ban).
+        Self-Healing 2.0: Install if missing, AND restart if stopped/crashed.
+        ","1960","test_fail2ban_status[DE-DUS]","tests","Wed Mar 25 04:08:07 UTC 2026","passed","Wed Mar 25 04:08:09 UTC 2026","TestSecurityRules","test_audit_rules","",""
+"Ensures that the Uncomplicated Firewall (UFW) is active and protecting the node.","321","Audit: Firewall (UFW) Status","tests","Wed Mar 25 04:08:32 UTC 2026","failed","Wed Mar 25 04:08:32 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Verifies that the server is reachable and accepting SSH commands.
+        This is the foundation for all other infrastructure tests.
+        ","240","Smoke Test: SSH Connectivity","tests","Wed Mar 25 04:08:26 UTC 2026","passed","Wed Mar 25 04:08:26 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"Ensures that the Uncomplicated Firewall (UFW) is active and protecting the node.","284","Audit: Firewall (UFW) Status","tests","Wed Mar 25 04:08:31 UTC 2026","passed","Wed Mar 25 04:08:31 UTC 2026","TestSecurityInfrastructure","Infrastructure Security Audit","",""
+"
+        Measures the Round-Trip Time (RTT) from the local machine to the server.
+        Ensures that latency is within acceptable limits for a stable VPN connection.
+        ","0","Network: Latency and Packet Loss (Client to Server)","tests","Wed Mar 25 04:08:11 UTC 2026","skipped","Wed Mar 25 04:08:11 UTC 2026","TestNetworkPerformance","Network Performance & Capacity","",""
