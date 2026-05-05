@@ -1,1 +1,0 @@
-DEBUG    testinfra:base.py:328 RUN CommandResult(backend=<testinfra.backend.paramiko.ParamikoBackend object at 0x7fcc7d9c04c0>, exit_status=56, command=b"curl -o /dev/null --silent --write-out '%{speed_download}' --max-time 20 --connect-timeout 10 http://cachefly.cachefly.net/100mb.test", _stdout=b'15987869', _stderr=b'')
