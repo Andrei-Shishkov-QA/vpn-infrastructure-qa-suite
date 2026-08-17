@@ -1,0 +1,1 @@
+DEBUG    testinfra:base.py:328 RUN CommandResult(backend=<testinfra.backend.paramiko.ParamikoBackend object at 0x7f0bfd279960>, exit_status=127, command=b'ufw status', _stdout=b'', _stderr=b'bash: line 1: ufw: command not found\n')
