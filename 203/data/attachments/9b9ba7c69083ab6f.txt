@@ -1,0 +1,1 @@
+ERROR    paramiko.transport:transport.py:1909 Socket exception: Connection reset by peer (104)
