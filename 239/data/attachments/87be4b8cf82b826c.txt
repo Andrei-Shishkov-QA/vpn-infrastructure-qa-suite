@@ -1,0 +1,19 @@
+ERROR    paramiko.transport:transport.py:1909 Exception (client): Error reading SSH protocol banner[Errno 104] Connection reset by peer
+ERROR    paramiko.transport:transport.py:1907 Traceback (most recent call last):
+ERROR    paramiko.transport:transport.py:1907   File "/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/site-packages/paramiko/transport.py", line 2327, in _check_banner
+ERROR    paramiko.transport:transport.py:1907     buf = self.packetizer.readline(timeout)
+ERROR    paramiko.transport:transport.py:1907   File "/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/site-packages/paramiko/packet.py", line 381, in readline
+ERROR    paramiko.transport:transport.py:1907     buf += self._read_timeout(timeout)
+ERROR    paramiko.transport:transport.py:1907   File "/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/site-packages/paramiko/packet.py", line 616, in _read_timeout
+ERROR    paramiko.transport:transport.py:1907     x = self.__socket.recv(128)
+ERROR    paramiko.transport:transport.py:1907 ConnectionResetError: [Errno 104] Connection reset by peer
+ERROR    paramiko.transport:transport.py:1907 
+ERROR    paramiko.transport:transport.py:1907 During handling of the above exception, another exception occurred:
+ERROR    paramiko.transport:transport.py:1907 
+ERROR    paramiko.transport:transport.py:1907 Traceback (most recent call last):
+ERROR    paramiko.transport:transport.py:1907   File "/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/site-packages/paramiko/transport.py", line 2143, in run
+ERROR    paramiko.transport:transport.py:1907     self._check_banner()
+ERROR    paramiko.transport:transport.py:1907   File "/opt/hostedtoolcache/Python/3.10.21/x64/lib/python3.10/site-packages/paramiko/transport.py", line 2331, in _check_banner
+ERROR    paramiko.transport:transport.py:1907     raise SSHException(
+ERROR    paramiko.transport:transport.py:1907 paramiko.ssh_exception.SSHException: Error reading SSH protocol banner[Errno 104] Connection reset by peer
+ERROR    paramiko.transport:transport.py:1907
