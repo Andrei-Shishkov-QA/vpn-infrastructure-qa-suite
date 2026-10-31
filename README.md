@@ -40,9 +40,13 @@ Known limitation: root login over SSH stayed enabled on some servers. The test f
 ## CI and reports
 
 - GitHub Actions ran the tests on every push and every night.
-- Results went to an Allure report on GitHub Pages. Passwords and IP addresses were masked before publishing.
+- Results went to an Allure report on GitHub Pages.
 - If a test failed, a Telegram bot sent an alert with a link to the report.
 - CI is disabled now, since the servers are shut down.
+
+![Allure report: last green run, 23 March 2026](docs/allure-report-2026-03-23.png)
+
+*Last green run before the servers were shut down (23 March 2026): 33 passed, 0 failed. 8 skipped by design: ping checks are blocked in GitHub Actions, and the root login check is a known issue marked `xfail`.*
 
 ## Tech stack
 
