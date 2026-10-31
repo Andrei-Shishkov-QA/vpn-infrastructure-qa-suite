@@ -1,55 +1,51 @@
-# Network Topology: Distributed VPN Infrastructure
+# Network Topology
 
-## Architecture Overview
-The infrastructure follows a **Shared-Nothing Architecture**. Each node operates independently to ensure maximum fault tolerance. There is no central point of failure (SPOF); user traffic is manually balanced across available nodes.
+> The project is archived: the servers were shut down in 2026. This page describes how the servers were set up before that.
 
-### Visual Diagram
+## Overview
+
+The service ran on 4 independent servers. They did not depend on each other: if one failed, the others kept working, and users were switched to another server manually.
+
+## Diagram
+
 ```mermaid
 graph TD
-    User((Client Devices))
-    
-    subgraph "Production Environment (High Availability)"
-        NL[🇳🇱 NL-AMS: Primary Node]
-        AT[🇦🇹 AT-VIE: Failover Node]
-        RU[🇷🇺 RU-MOW: Transit/Entry]
-    end
-    
-    subgraph "Staging Environment"
-        DE[🇩🇪 DE-DUS: Experimental]
-    end
-    
-    Internet((Global Internet))
+    User((Users' devices))
 
-    %% Connections
-    User -->|VLESS/XTLS| NL
-    User -->|VLESS/Shadowsocks| AT
-    User -->|VLESS Reality| RU
-    User -->|Proto-Test| DE
-    
+    subgraph "Main servers"
+        NL[NL-AMS: main server]
+        AT[AT-VIE: backup server]
+        RU[RU-MOW: entry server]
+    end
+
+    subgraph "Test server"
+        DE[DE-DUS: new settings]
+    end
+
+    Internet((Internet))
+
+    User --> NL
+    User --> AT
+    User --> RU
+    User -.-> DE
+
     NL --> Internet
     AT --> Internet
     RU --> Internet
     DE --> Internet
-
-    %% Styling
-    style NL fill:#d4f1f9,stroke:#333,stroke-width:2px
-    style AT fill:#fff3cd,stroke:#333,stroke-width:2px
-    style RU fill:#f8d7da,stroke:#333,stroke-width:2px
 ```
 
-## Node Specifications
+## Servers
 
-| Node ID    | Role             | Location       | Stack                                  | Connectivity                    |
-|:-----------|:-----------------|:---------------|:---------------------------------------|:--------------------------------|
-| **NL-AMS** | **Primary Exit** | Amsterdam, NL  | Ubuntu 22.04 + Docker (Outline, 3x-ui) | 1 Gbps / Low Latency to EU      |
-| **AT-VIE** | **Failover**     | Vienna, AT     | Ubuntu 22.04 + 3x-ui                   | Backup route if NL is blocked   |
-| **RU-MOW** | **Transit**      | Moscow, RU     | Ubuntu 20.04 + 3x-ui (Reality)         | Entry point for deep censorship |
-| **DE-DUS** | **Staging**      | Dusseldorf, DE | Ubuntu 24.04 + Remnawave               | Sandbox for testing protocols   |
+| Server | Role | Location | Software |
+|:--|:--|:--|:--|
+| **NL-AMS** | Main server | Amsterdam, Netherlands | Ubuntu 22.04 + Docker (Outline, 3x-ui) |
+| **AT-VIE** | Backup server | Vienna, Austria | Ubuntu 22.04 + 3x-ui |
+| **RU-MOW** | Entry server | Moscow, Russia | Ubuntu 20.04 + 3x-ui |
+| **DE-DUS** | Test server for new settings | Düsseldorf, Germany | Ubuntu 24.04 + Remnawave |
 
+## Management
 
-## Management Plane
-* **Access:** SSH Password authentication (MVP state). Migration to Key-based auth is planned.
-* **Configuration:** Infrastructure as Code (Local Git repository).
-* **Monitoring:** Passive (Script-based periodic checks).
-
-
+- **Access:** SSH with a password. Moving to SSH keys was planned.
+- **Settings:** tracked in a local Git repository.
+- **Monitoring:** scripts checked the servers on a schedule and sent alerts to Telegram.
