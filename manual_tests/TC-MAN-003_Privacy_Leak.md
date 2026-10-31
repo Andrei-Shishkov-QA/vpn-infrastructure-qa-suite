@@ -1,31 +1,34 @@
-# 🧪 Test Case: VPN Privacy & DNS Leak Verification
+# Test Case: Real IP and DNS Leak
 
-| **ID**            | **TC-MAN-003**                                                                                                                                                |
-|:------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Title**         | Verification of Real IP masking and DNS Leak protection                                                                                                       |
-| **Priority**      | **Critical (P1)**                                                                                                                                             |
-| **Type**          | Security / Privacy                                                                                                                                            |
-| **Prerequisites** | 1. Mobile Device (iOS/Android) with V2Box/v2rayNG installed.<br>2. Valid VLESS subscription key imported.<br>3. Internet connection is active (Wi-Fi or LTE). |
-| **Test Data**     | **Target URL:** `https://ipleak.net`<br>**Expected Country:** Netherlands (NL-AMS)                                                                            |
+| | |
+|:--|:--|
+| **ID** | TC-MAN-003 |
+| **Title** | Real IP and DNS servers are hidden when the VPN is on |
+| **Priority** | Critical (P1) |
+| **Type** | Security / Privacy |
+| **Preconditions** | 1. Phone (iOS or Android) with V2Box or v2rayNG.<br>2. A valid key is imported.<br>3. Internet works (Wi-Fi or mobile). |
+| **Test data** | URL: `https://ipleak.net`<br>Expected country: Netherlands (NL-AMS) |
 
-## 📝 Test Steps
+## Steps
 
-| #     | Action (Step)                                           | Expected Result                                                                                                      | Actual Result |
-|:------|:--------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------|:--------------|
-| **1** | Launch the VPN Client App.                              | App launches, main screen is visible.                                                                                |               |
-| **2** | Select the **"NL-AMS"** server from the list.           | Server is selected.                                                                                                  |               |
-| **3** | Tap the **"Connect"** toggle/button.                    | 1. Toggle turns Green/Active.<br>2. "VPN" icon appears in the Status Bar.<br>3. Status changes to "Connected".       |               |
-| **4** | Open a web browser (Chrome/Safari) in "Incognito" mode. | Browser opens.                                                                                                       |               |
-| **5** | Navigate to `https://ipleak.net`.                       | Website loads successfully.                                                                                          |               |
-| **6** | Scroll to **"Your IP info"** section.                   | The displayed IP address matches the VPN Server IP (Start with `80.85...`). **It must NOT show your local ISP IP.**  |               |
-| **7** | Scroll to **"DNS Addresses"** section.                  | 1. 0 servers found from your local ISP (e.g., Ucom/Beeline).<br>2. DNS Servers match the VPN location (Netherlands). |               |
+| # | Action | Expected result | Actual result |
+|:--|:--|:--|:--|
+| 1 | Open the VPN app | The main screen opens | |
+| 2 | Select the **NL-AMS** server | The server is selected | |
+| 3 | Tap **Connect** | 1. The switch turns green<br>2. The VPN icon is in the status bar<br>3. Status is "Connected" | |
+| 4 | Open a browser (Chrome or Safari) in incognito mode | The browser opens | |
+| 5 | Go to `https://ipleak.net` | The page loads | |
+| 6 | Find the **"Your IP info"** section | The IP matches the VPN server. The IP from the local internet provider is **not** shown | |
+| 7 | Find the **"DNS Addresses"** section | 1. No DNS servers of the local provider (for example, Ucom or Beeline)<br>2. DNS servers are in the Netherlands | |
 
-## 🐛 Post-Conditions
-* Disconnect VPN.
-* Close the browser.
+## After the test
 
-## 📊 Execution History
-* **Date:** 2026-02-17
-* **Tester:** Shishkov Andrei
-* **Status:** ✅ **PASS**
-* **Comments:** IP was masked successfully. No WebRTC leaks detected.
+- Turn off the VPN.
+- Close the browser.
+
+## Run history
+
+- **Date:** 2026-02-17
+- **Tester:** Andrei Shishkov
+- **Status:** ✅ PASS
+- **Comment:** IP is hidden, no WebRTC leaks found.
