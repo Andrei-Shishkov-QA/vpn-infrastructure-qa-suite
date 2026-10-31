@@ -22,7 +22,7 @@ My part:
 - test design: checks, expected results, test strategy, traceability matrix;
 - reviewing and testing the result on real servers;
 - manual testing of mobile clients (Android, iOS);
-- Git workflow: branches, pull requests, merges.
+- running the repository on GitHub: commits, CI setup, documentation.
 
 ## What is checked
 
